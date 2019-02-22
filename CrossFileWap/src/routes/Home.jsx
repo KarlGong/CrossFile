@@ -1,8 +1,8 @@
 import { Button, WhiteSpace, WingBlank } from "antd-mobile";
 import React, {Component} from "react";
-import guid from "~/shared/utils/guid";
+import guid from "~/utils/guid";
 
-export default class WapApp extends Component {
+export default class Home extends Component {
     componentWillMount = () => {
     };
 

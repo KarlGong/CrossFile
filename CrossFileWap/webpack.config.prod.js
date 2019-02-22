@@ -5,16 +5,12 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    devtool: "eval",
     entry: [
-        "react-hot-loader/patch",
-        "webpack-dev-server/client?http://localhost:3000",
-        "webpack/hot/only-dev-server",
         path.join(__dirname, "src/index")
     ],
     output: {
-        path: path.join(__dirname, "build"),
-        filename: "main.js",
+        path: path.join(__dirname, "dist"),
+        filename: "[name].[chunkhash].js",
         publicPath: "/"
     },
     plugins: [
@@ -23,7 +19,11 @@ module.exports = {
             inject: "body",
             filename: "index.html"
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
     ],
     resolve: {
         extensions: [".js", ".jsx"],
@@ -41,7 +41,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ["style-loader", "css-loader"],
-                include: srcPath
+                include: [srcPath, libPath]
             },
             {
                 test: /\.less$/,
