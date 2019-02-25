@@ -31,7 +31,7 @@ export default class SpacePage extends Component {
     handleClickUpload = (e) => {
         let file = e.target.files[0];
         if (file) {
-            openUploadModal(file);
+            openUploadModal(this.props.params.spaceName, file);
         }
     }
 }

@@ -8,11 +8,11 @@ import axios from "axios";
 import Validator from "~/utils/Validator";
 import formatBytes from "~/utils/formatBytes";
 
-export default function openUploadModal(file, onSuccess) {
+export default function openUploadModal(spaceName, file, onSuccess) {
     const target = document.createElement("div");
     document.body.appendChild(target);
 
-    render(<UploadModal file={file} onSuccess={onSuccess} afterClose={() => {
+    render(<UploadModal spaceName={spaceName} file={file} onSuccess={onSuccess} afterClose={() => {
         unmountComponentAtNode(target);
         target.remove();
     }}/>, target);
@@ -21,6 +21,7 @@ export default function openUploadModal(file, onSuccess) {
 @observer
 class UploadModal extends Component {
     static defaultProps = {
+        spaceName: "",
         file: "",
         onSuccess: (e) => {
         },
@@ -29,6 +30,7 @@ class UploadModal extends Component {
     };
 
     @observable visible = true;
+    name = this.props.file.name;
 
     render = () => {
         return <Modal
@@ -40,9 +42,13 @@ class UploadModal extends Component {
             onClose={() => this.visible = false}
             afterClose={() => this.props.afterClose()}
         >
-            <List renderHeader={() => <div>Upload</div>}>
+            <List renderHeader={() => <div>{this.props.file.name}</div>}>
                 <List.Item>
-                    <InputItem placeholder={this.props.file.name}>Name</InputItem>
+                    <InputItem
+                        placeholder={this.props.file.name}
+                        defaultValue={this.props.file.name}
+                        onChange={value => this.name = value || this.props.file.name}
+                    >Name</InputItem>
                     <InputItem defaultValue={formatBytes(this.props.file.size)} editable={false}>Size</InputItem>
                     <Button type="primary" onClick={this.uploadFile}>Upload</Button>
                 </List.Item>
@@ -51,6 +57,12 @@ class UploadModal extends Component {
     };
 
     uploadFile = () => {
-
+        let formData = new FormData();
+        formData.append(this.name, this.props.file);
+        axios.post("/api/space/" + this.props.spaceName, formData,
+            {headers: {"Content-Type": "multipart/form-data"},}
+        ).then(response => {
+            alert(response.data)
+        })
     };
 }

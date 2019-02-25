@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CrossFile.Models;
 using CrossFile.Services;
+using CrossFile.Services.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrossFile.Controllers
@@ -29,17 +30,18 @@ namespace CrossFile.Controllers
         }
 
         [HttpPost("{spaceName}")]
-        public async Task<Item> AddItem([FromRoute] string spaceName, [FromBody] Parameters.AddItemParams ps)
+        public async Task<Item> AddItem([FromRoute] string spaceName)
         {
             var formFile = Request.Form.Files[0];
             var fileExt = Path.GetExtension(formFile.FileName);
 
-            var addItemParams = _mapper.Map<Services.Parameters.AddItemParams>(ps);
-            addItemParams.FileExt = fileExt;
-            addItemParams.SpaceName = spaceName;
-            addItemParams.FileStream = formFile.OpenReadStream();
-
-            return await _service.AddItemAsync(addItemParams);
+            return await _service.AddItemAsync(new AddItemParams()
+            {
+                Name = formFile.Name,
+                FileExt = fileExt,
+                SpaceName = spaceName,
+                FileStream = formFile.OpenReadStream()
+            });
         }
     }
 }

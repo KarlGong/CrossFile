@@ -12,10 +12,10 @@ namespace CrossFile.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    ItemId = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     SpaceName = table.Column<string>(nullable: true),
-                    ItemName = table.Column<string>(nullable: true),
-                    ItemExt = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    FileName = table.Column<string>(nullable: true),
                     InsertTime = table.Column<DateTime>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UpdateTime = table.Column<DateTime>(nullable: false)
@@ -23,7 +23,7 @@ namespace CrossFile.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.ItemId);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(

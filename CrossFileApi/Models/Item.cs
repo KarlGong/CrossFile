@@ -10,8 +10,6 @@ namespace CrossFile.Models
 
         public string Name { get; set; }
         
-        public string FileExt { get; set; }
-        
         public string FileName { get; set; }
         
         public DateTime InsertTime { get; set; }
