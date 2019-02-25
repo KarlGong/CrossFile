@@ -48,7 +48,12 @@ module.exports = {
                 use: [
                     "style-loader",
                     "css-loader",
-                    "less-loader"
+                    {
+                        loader: "less-loader",
+                        options: {
+                            javascriptEnabled: true
+                        }
+                    }
                 ],
                 include: [srcPath, libPath]
             },
@@ -57,7 +62,7 @@ module.exports = {
                 use: [{
                     loader: "file-loader",
                     query: {
-                        name: function(file) {
+                        name: function (file) {
                             return file.replace(/\\/g, "/").split("/src/")[1];
                         },
                     }
