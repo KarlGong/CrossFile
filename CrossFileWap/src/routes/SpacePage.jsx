@@ -33,5 +33,6 @@ export default class SpacePage extends Component {
         if (file) {
             openUploadModal(this.props.params.spaceName, file);
         }
+        e.target.value = null; // clear the select file.
     }
 }

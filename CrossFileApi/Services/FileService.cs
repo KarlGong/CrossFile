@@ -27,7 +27,7 @@ namespace CrossFile.Services
 
             var filePath = Path.Combine(storeFolder, fileName);
 
-            return new FileStream(filePath, FileMode.Open);
+            return await Task.FromResult(new FileStream(filePath, FileMode.Open));
         }
 
         public async Task SaveFileAsync(string fileName, Stream fileStream)

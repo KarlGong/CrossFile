@@ -1,4 +1,4 @@
-import {InputItem, Icon, Modal, Button, WingBlank, List} from "antd-mobile";
+import {InputItem, Icon, Modal, Button, WingBlank, List, Toast, Progress} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -7,6 +7,7 @@ import moment from "moment";
 import axios from "axios";
 import Validator from "~/utils/Validator";
 import formatBytes from "~/utils/formatBytes";
+import "./uploadModal.less";
 
 export default function openUploadModal(spaceName, file, onSuccess) {
     const target = document.createElement("div");
@@ -31,9 +32,12 @@ class UploadModal extends Component {
 
     @observable visible = true;
     name = this.props.file.name;
+    @observable isUploading = false;
+    @observable uploadPercentage = 0;
 
     render = () => {
         return <Modal
+            className="uploadModal"
             popup
             closable
             maskClosable={false}
@@ -42,7 +46,9 @@ class UploadModal extends Component {
             onClose={() => this.visible = false}
             afterClose={() => this.props.afterClose()}
         >
-            <List renderHeader={() => <div>{this.props.file.name}</div>}>
+            <List
+                renderHeader={() => <div>{this.isUploading ? this.uploadPercentage + "%" : this.props.file.name}</div>}>
+                <Progress percent={this.uploadPercentage} position="normal" unfilled={false}/>
                 <List.Item>
                     <InputItem
                         placeholder={this.props.file.name}
@@ -50,7 +56,9 @@ class UploadModal extends Component {
                         onChange={value => this.name = value || this.props.file.name}
                     >Name</InputItem>
                     <InputItem defaultValue={formatBytes(this.props.file.size)} editable={false}>Size</InputItem>
-                    <Button type="primary" onClick={this.uploadFile}>Upload</Button>
+                    <Button type="primary" disabled={this.isUploading} onClick={this.uploadFile}>{
+                        this.isUploading ? "Uploading..." : "Upload"
+                    }</Button>
                 </List.Item>
             </List>
         </Modal>
@@ -59,10 +67,19 @@ class UploadModal extends Component {
     uploadFile = () => {
         let formData = new FormData();
         formData.append(this.name, this.props.file);
+        this.isUploading = true;
         axios.post("/api/space/" + this.props.spaceName, formData,
-            {headers: {"Content-Type": "multipart/form-data"},}
+            {
+                headers: {"Content-Type": "multipart/form-data"},
+                onUploadProgress: (e) => {
+                    if (e.lengthComputable) {
+                        this.uploadPercentage = (e.loaded * 100 / e.total).toFixed(1);
+                    }
+                }
+            }
         ).then(response => {
-            alert(response.data)
-        })
+            this.visible = false;
+            Toast.success("Uploaded successfully!");
+        }).finally(() => this.isUploading = false)
     };
 }
