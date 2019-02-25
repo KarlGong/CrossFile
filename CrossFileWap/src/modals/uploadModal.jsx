@@ -34,12 +34,15 @@ class UploadModal extends Component {
     name = this.props.file.name;
     @observable isUploading = false;
     @observable uploadPercentage = 0;
+    @observable uploadLoaded = 0;
+    @observable uploadTotal = 0;
+    uploadingCancelSource = null;
 
     render = () => {
         return <Modal
             className="uploadModal"
             popup
-            closable
+            closable={!this.isUploading}
             maskClosable={false}
             visible={this.visible}
             animationType="slide-up"
@@ -47,18 +50,22 @@ class UploadModal extends Component {
             afterClose={() => this.props.afterClose()}
         >
             <List
-                renderHeader={() => <div>{this.isUploading ? this.uploadPercentage + "%" : this.props.file.name}</div>}>
+                renderHeader={() =>
+                    <div>{this.isUploading ? `${formatBytes(this.uploadLoaded)} / ${formatBytes(this.uploadTotal)} - ${this.uploadPercentage}%` : this.props.file.name}</div>}>
                 <Progress percent={this.uploadPercentage} position="normal" unfilled={false}/>
                 <List.Item>
                     <InputItem
                         placeholder={this.props.file.name}
+                        editable={!this.isUploading}
                         defaultValue={this.props.file.name}
                         onChange={value => this.name = value || this.props.file.name}
                     >Name</InputItem>
                     <InputItem defaultValue={formatBytes(this.props.file.size)} editable={false}>Size</InputItem>
-                    <Button type="primary" disabled={this.isUploading} onClick={this.uploadFile}>{
-                        this.isUploading ? "Uploading..." : "Upload"
-                    }</Button>
+                    {
+                        this.isUploading ? <Button type="warning" onClick={this.cancelUploading}>Cancel</Button>
+                            : <Button type="primary" onClick={this.uploadFile}>Upload</Button>
+                    }
+
                 </List.Item>
             </List>
         </Modal>
@@ -68,11 +75,15 @@ class UploadModal extends Component {
         let formData = new FormData();
         formData.append(this.name, this.props.file);
         this.isUploading = true;
+        this.uploadingCancelSource = axios.CancelToken.source();
         axios.post("/api/space/" + this.props.spaceName, formData,
             {
                 headers: {"Content-Type": "multipart/form-data"},
+                cancelToken: this.uploadingCancelSource.token,
                 onUploadProgress: (e) => {
-                    if (e.lengthComputable) {
+                    if (e.lengthComputable && this.isUploading) {
+                        this.uploadLoaded = e.loaded;
+                        this.uploadTotal = e.total;
                         this.uploadPercentage = (e.loaded * 100 / e.total).toFixed(1);
                     }
                 }
@@ -82,4 +93,17 @@ class UploadModal extends Component {
             Toast.success("Uploaded successfully!");
         }).finally(() => this.isUploading = false)
     };
+
+    cancelUploading = () => {
+        Modal.alert("Cancel Uploading", "Are you sure?", [
+            {text: "No", onPress: () => {}},
+            {text: "Yes", onPress: () => {
+                this.uploadingCancelSource.cancel("Uploading aborted!");
+                this.isUploading = false;
+                this.uploadPercentage = 0;
+                this.uploadLoaded = 0;
+                this.uploadTotal = 0;
+            }},
+        ])
+    }
 }
