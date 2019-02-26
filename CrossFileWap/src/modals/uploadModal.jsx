@@ -24,10 +24,8 @@ class UploadModal extends Component {
     static defaultProps = {
         spaceName: "",
         file: "",
-        onSuccess: (e) => {
-        },
-        afterClose: () => {
-        }
+        onSuccess: () => {},
+        afterClose: () => {}
     };
 
     @observable visible = true;
@@ -42,16 +40,16 @@ class UploadModal extends Component {
         return <Modal
             className="uploadModal"
             popup
-            closable={!this.isUploading}
+            closable
             maskClosable={false}
             visible={this.visible}
             animationType="slide-up"
-            onClose={() => this.visible = false}
+            onClose={this.handleClose}
             afterClose={() => this.props.afterClose()}
         >
-            <List
-                renderHeader={() =>
-                    <div>{this.isUploading ? `${formatBytes(this.uploadLoaded)} / ${formatBytes(this.uploadTotal)} - ${this.uploadPercentage}%` : this.props.file.name}</div>}>
+            <List renderHeader={() =>
+                <div>{this.isUploading ? `${formatBytes(this.uploadLoaded)} / ${formatBytes(this.uploadTotal)} - ${this.uploadPercentage}%` : this.props.file.name}</div>
+            }>
                 <Progress percent={this.uploadPercentage} position="normal" unfilled={false}/>
                 <List.Item>
                     <InputItem
@@ -90,20 +88,39 @@ class UploadModal extends Component {
             }
         ).then(response => {
             this.visible = false;
-            Toast.success("Uploaded successfully!");
+            Toast.success("Uploaded successfully!", undefined, undefined, false);
+            this.props.onSuccess();
         }).finally(() => this.isUploading = false)
     };
 
     cancelUploading = () => {
         Modal.alert("Cancel Uploading", "Are you sure?", [
             {text: "No", onPress: () => {}},
-            {text: "Yes", onPress: () => {
-                this.uploadingCancelSource.cancel("Uploading aborted!");
-                this.isUploading = false;
-                this.uploadPercentage = 0;
-                this.uploadLoaded = 0;
-                this.uploadTotal = 0;
-            }},
+            {
+                text: "Yes", onPress: () => {
+                    this.uploadingCancelSource.cancel("Uploading cancelled!");
+                    this.isUploading = false;
+                    this.uploadPercentage = 0;
+                    this.uploadLoaded = 0;
+                    this.uploadTotal = 0;
+                }
+            },
         ])
+    };
+
+    handleClose = () => {
+        if (this.isUploading) {
+            Modal.alert("Close", "The uploading will be cancelled.", [
+                {text: "No", onPress: () => {}},
+                {
+                    text: "Yes", onPress: () => {
+                        this.uploadingCancelSource.cancel("Uploading aborted!");
+                        this.visible = false;
+                    }
+                },
+            ]);
+        } else {
+            this.visible = false;
+        }
     }
 }

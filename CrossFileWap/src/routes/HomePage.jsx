@@ -37,7 +37,7 @@ export default class HomePage extends Component {
                             this.validator.validate("spaceName");
                         }}
                         error={this.validator.getResult("spaceName").status === "error"}
-                        onErrorClick={e => Toast.info(this.validator.getResult("spaceName").message)}
+                        onErrorClick={e => Toast.info(this.validator.getResult("spaceName").message, undefined, undefined, false)}
                     />
                 </WingBlank>
                 <WhiteSpace size="lg"/>

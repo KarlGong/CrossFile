@@ -7,7 +7,7 @@ const history = browserHistory;
 axios.interceptors.response.use(
     response => response,
     error => {
-        Toast.fail(error.message);
+        Toast.fail(error.message, undefined, undefined, false);
         return Promise.reject(error);
     }
 );
