@@ -35,7 +35,7 @@ export default class ItemPage extends Component {
                             <InputItem defaultValue={moment(this.item.insertTime).format("YYYY-MM-DD HH:mm")} editable={false}>Upload At</InputItem>
                             <Flex style={{padding: "15px 0 10px"}}>
                                 <Flex.Item>
-                                    <Button type="ghost" size="small" onClick={() => this.props.router.push("/space/" + this.spaceName)}>{"< "}Back</Button>
+                                    <Button type="ghost" icon="left" size="small" onClick={() => this.props.router.push("/space/" + this.spaceName)}>Back</Button>
                                 </Flex.Item>
                                 <Flex.Item>
                                     <a href={"/api/file/" + this.item.fileName}>

@@ -96,7 +96,7 @@ export default class SpacePage extends Component {
                 onEndReachedThreshold={0}
                 pageSize={10}
             >
-                <div style={{padding: "30px", textAlign: "center", color: "#888"}}>
+                <div className="footer">
                     {!this.isRefreshing && !this.items.length ? "No items" : null}
                     {this.items.length && this.isLoadedToEnd ? "No more items" : null}
                     {this.isLoadingMore || this.isRefreshing ? <ActivityIndicator size="large"/> : null}
