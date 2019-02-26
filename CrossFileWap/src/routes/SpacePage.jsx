@@ -87,7 +87,7 @@ export default class SpacePage extends Component {
                         onRefresh={this.refresh}
                     />}
                 onEndReached={this.loadMore}
-                onEndReachedThreshold={400}
+                onEndReachedThreshold={0}
                 pageSize={10}
             >
                 <div style={{padding: "30px", textAlign: "center"}}>
