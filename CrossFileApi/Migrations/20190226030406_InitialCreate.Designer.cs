@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossFile.Migrations
 {
     [DbContext(typeof(CrossFileDbContext))]
-    [Migration("20190225101136_InitialCreate")]
+    [Migration("20190226030406_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,8 @@ namespace CrossFile.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("Size");
 
                     b.Property<string>("SpaceName");
 

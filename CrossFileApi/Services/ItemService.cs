@@ -54,6 +54,7 @@ namespace CrossFile.Services
 
             var newItem = _mapper.Map<Item>(ps);
             newItem.Id = itemId;
+            newItem.Size = ps.FileStream.Length;
             newItem.FileName = fileName;
 
             await _context.Items.AddAsync(newItem);

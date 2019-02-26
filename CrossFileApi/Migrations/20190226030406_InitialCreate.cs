@@ -15,6 +15,7 @@ namespace CrossFile.Migrations
                     Id = table.Column<string>(nullable: false),
                     SpaceName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
+                    Size = table.Column<long>(nullable: false),
                     FileName = table.Column<string>(nullable: true),
                     InsertTime = table.Column<DateTime>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),

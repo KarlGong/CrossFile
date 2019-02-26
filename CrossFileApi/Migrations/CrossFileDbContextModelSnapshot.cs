@@ -29,6 +29,8 @@ namespace CrossFile.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<long>("Size");
+
                     b.Property<string>("SpaceName");
 
                     b.Property<DateTime>("UpdateTime")
