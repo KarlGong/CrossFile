@@ -13,7 +13,8 @@ export default class SpacePage extends Component {
 
     spaceName = this.props.params.spaceName;
     @observable isRefreshing = false;
-    @observable isLoading = false;
+    @observable isLoadingMore = false;
+    @observable isLoadingToEnd = false;
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1.id !== row2.id,
     });
@@ -43,14 +44,6 @@ export default class SpacePage extends Component {
             <ListView
                 className="list"
                 dataSource={this.listViewDataSource}
-                renderFooter={() => {
-                    if (!this.isRefreshing && !this.items.length) {
-                        return <div style={{padding: "30px", textAlign: "center"}}>No items</div>;
-                    }
-                    if (this.isLoading) {
-                        return <div style={{padding: "30px", textAlign: "center"}}><ActivityIndicator animating/></div>
-                    }
-                }}
                 renderRow={(rowData, sectionID, rowID) => {
                     return <SwipeAction
                         autoClose
@@ -93,9 +86,16 @@ export default class SpacePage extends Component {
                         refreshing={this.isRefreshing}
                         onRefresh={this.refresh}
                     />}
-                onEndReached={this.onEndReached}
+                onEndReached={this.loadMore}
+                onEndReachedThreshold={400}
                 pageSize={10}
-            />
+            >
+                <div style={{padding: "30px", textAlign: "center"}}>
+                    {!this.isRefreshing && !this.items.length ? "No items" : null}
+                    {this.items.length && this.isLoadingToEnd ? "No more items" : null}
+                    {this.isLoadingMore ? <ActivityIndicator animating/> : null}
+                </div>
+            </ListView>
         </div>
     };
 
@@ -112,14 +112,23 @@ export default class SpacePage extends Component {
 
     refresh = () => {
         this.isRefreshing = true;
-        axios.get("/api/space/" + this.spaceName)
+        axios.get("/api/space/" + this.spaceName, {params: {size: 10}})
             .then(response => {
                 this.items = response.data;
                 this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                this.isLoadingToEnd = response.data.length < 10;
             }).finally(() => this.isRefreshing = false);
     };
 
     loadMore = () => {
-
+        if (!this.isLoadingToEnd && !this.isLoadingMore) {
+            this.isLoadingMore = true;
+            axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
+                .then(response => {
+                    this.items = this.items.concat(response.data);
+                    this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                    this.isLoadingToEnd = response.data.length < 10;
+                }).finally(() => this.isLoadingMore = false);
+        }
     }
 }

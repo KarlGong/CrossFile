@@ -12,7 +12,8 @@ namespace CrossFile.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     SpaceName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),

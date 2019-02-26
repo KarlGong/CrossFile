@@ -14,13 +14,13 @@ namespace CrossFile.Services
 {
     public interface IItemService
     {
-        Task<Item> GetItemAsync(string itemId);
+        Task<Item> GetItemAsync(int itemId);
 
-        Task<List<Item>> GetItemsAsync(string spaceName);
+        Task<List<Item>> GetItemsAsync(GetItemsParams ps);
 
         Task<Item> AddItemAsync(AddItemParams ps);
 
-        Task DeleteItemAsync(string itemId);
+        Task DeleteItemAsync(int itemId);
     }
 
     public class ItemService : IItemService
@@ -36,26 +36,30 @@ namespace CrossFile.Services
             _mapper = mapper;
         }
 
-        public async Task<Item> GetItemAsync(string itemId)
+        public async Task<Item> GetItemAsync(int itemId)
         {
             return await _context.Items.SingleAsync(i => i.Id == itemId);
         }
 
-        public async Task<List<Item>> GetItemsAsync(string spaceName)
+        public async Task<List<Item>> GetItemsAsync(GetItemsParams ps)
         {
-            return await _context.Items.Where(i => i.SpaceName == spaceName).OrderByDescending(i => i.InsertTime)
-                .ToListAsync();
+            var queryable = _context.Items.Where(i => i.SpaceName == ps.SpaceName);
+
+            if (ps.FromId != null)
+            {
+                queryable = queryable.Where(i => i.Id < ps.FromId);
+            }
+
+            return await queryable.OrderByDescending(i => i.Id).Take(ps.Size).ToListAsync();
         }
 
         public async Task<Item> AddItemAsync(AddItemParams ps)
         {
-            var itemId = Guid.NewGuid().ToString();
-            var fileName = itemId + ps.FileExt;
+            var fileName = Guid.NewGuid().ToString() + ps.FileExt;
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
 
             var newItem = _mapper.Map<Item>(ps);
-            newItem.Id = itemId;
             newItem.Size = ps.FileStream.Length;
             newItem.FileName = fileName;
 
@@ -66,7 +70,7 @@ namespace CrossFile.Services
             return newItem;
         }
 
-        public async Task DeleteItemAsync(string itemId)
+        public async Task DeleteItemAsync(int itemId)
         {
             var item = await _context.Items.SingleAsync(i => i.Id == itemId);
 

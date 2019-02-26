@@ -4,7 +4,7 @@ namespace CrossFile.Models
 {
     public class Item
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         
         public string SpaceName { get; set; }
 
