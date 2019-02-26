@@ -1,8 +1,19 @@
 .text-preview {
   height: 100%;
-  overflow: auto;
-  padding: 15px;
-  pre {
-    margin: 0;
+  position: relative;
+
+    pre {
+      padding: 15px;
+      height: 100%;
+      overflow: auto;
+      margin: 0;
+  }
+
+  .copy-button {
+    padding: 0;
+    width: 50px;
+    position: absolute !important;
+    right: 10px;
+    bottom: 10px;
   }
 }
