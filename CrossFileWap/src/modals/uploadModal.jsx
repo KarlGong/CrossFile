@@ -24,7 +24,7 @@ class UploadModal extends Component {
     static defaultProps = {
         spaceName: "",
         file: "",
-        onSuccess: () => {},
+        onSuccess: (item) => {},
         afterClose: () => {}
     };
 
@@ -89,7 +89,7 @@ class UploadModal extends Component {
         ).then(response => {
             this.visible = false;
             Toast.success("Uploaded successfully!", undefined, undefined, false);
-            this.props.onSuccess();
+            this.props.onSuccess(response.data);
         }).finally(() => this.isUploading = false)
     };
 

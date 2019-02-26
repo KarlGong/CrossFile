@@ -1,4 +1,4 @@
-import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator} from "antd-mobile";
+import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -17,6 +17,7 @@ export default class SpacePage extends Component {
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1.id !== row2.id,
     });
+    items = [];
 
     constructor(props) {
         super(props);
@@ -42,28 +43,49 @@ export default class SpacePage extends Component {
             <ListView
                 className="list"
                 dataSource={this.listViewDataSource}
-                renderFooter={() => (<div style={{padding: 30, textAlign: "center"}}>
-                    {this.isLoading ? <ActivityIndicator animating/> : null}
-                </div>)}
+                renderFooter={() => {
+                    if (!this.isRefreshing && !this.items.length) {
+                        return <div style={{padding: "30px", textAlign: "center"}}>No items</div>;
+                    }
+                    if (this.isLoading) {
+                        return <div style={{padding: "30px", textAlign: "center"}}><ActivityIndicator animating/></div>
+                    }
+                }}
                 renderRow={(rowData, sectionID, rowID) => {
-                    return <List.Item
-                        key={rowID}
-                        thumb={<div className="thumb">{rowData.fileName.split(".").pop()}</div>}
-                        multipleLine
-                        onClick={() => {}}
+                    return <SwipeAction
+                        autoClose
+                        right={[
+                            {
+                                text: "Delete",
+                                onPress: () => {
+                                    axios.delete("/api/item/" + rowData.id).then(
+                                        response => {
+                                            this.items = this.items.filter(item => item.id !== rowData.id);
+                                            this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                                        });
+                                },
+                                className: "delete-button"
+                            },
+                        ]}
                     >
-                        {rowData.name}
-                        <List.Item.Brief>
-                            {formatBytes(rowData.size)}
-                            <span style={{float: "right"}}>
+                        <List.Item
+                            key={rowID}
+                            thumb={<div className="thumb">{rowData.fileName.split(".").pop()}</div>}
+                            multipleLine
+                            onClick={() => {}}
+                        >
+                            {rowData.name}
+                            <List.Item.Brief>
+                                {formatBytes(rowData.size)}
+                                <span className="insert-time">
                                 {moment().diff(moment(rowData.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?
                                     moment(rowData.insertTime).format("YYYY-MM-DD HH:mm")
                                     : moment(rowData.insertTime).fromNow()}
-                            </span>
-                        </List.Item.Brief>
-                    </List.Item>
+                                </span>
+                            </List.Item.Brief>
+                        </List.Item>
+                    </SwipeAction>
                 }}
-                renderSeparator={(sectionID, rowID) => <div key={rowID}></div>}
                 useBodyScroll
                 pullToRefresh={
                     <PullToRefresh
@@ -80,7 +102,10 @@ export default class SpacePage extends Component {
     handleClickUpload = (e) => {
         let file = e.target.files[0];
         if (file) {
-            openUploadModal(this.spaceName, file, () => {this.refresh()});
+            openUploadModal(this.spaceName, file, (item) => {
+                this.items = [item].concat(this.items);
+                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+            });
         }
         e.target.value = null; // clear the select file.
     };
@@ -88,8 +113,10 @@ export default class SpacePage extends Component {
     refresh = () => {
         this.isRefreshing = true;
         axios.get("/api/space/" + this.spaceName)
-            .then(response => this.listViewDataSource = this.listViewDataSource.cloneWithRows(response.data))
-            .finally(() => this.isRefreshing = false);
+            .then(response => {
+                this.items = response.data;
+                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+            }).finally(() => this.isRefreshing = false);
     };
 
     loadMore = () => {

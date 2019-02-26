@@ -19,6 +19,8 @@ namespace CrossFile.Services
         Task<List<Item>> GetItemsAsync(string spaceName);
 
         Task<Item> AddItemAsync(AddItemParams ps);
+
+        Task DeleteItemAsync(string itemId);
     }
 
     public class ItemService : IItemService
@@ -36,7 +38,7 @@ namespace CrossFile.Services
 
         public async Task<Item> GetItemAsync(string itemId)
         {
-            return await _context.Items.FirstAsync(i => i.Id == itemId);
+            return await _context.Items.SingleAsync(i => i.Id == itemId);
         }
 
         public async Task<List<Item>> GetItemsAsync(string spaceName)
@@ -62,6 +64,17 @@ namespace CrossFile.Services
             await _context.SaveChangesAsync();
 
             return newItem;
+        }
+
+        public async Task DeleteItemAsync(string itemId)
+        {
+            var item = await _context.Items.SingleAsync(i => i.Id == itemId);
+
+            await _fileService.DeleteFileAsync(item.FileName);
+
+            _context.Items.Remove(item);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

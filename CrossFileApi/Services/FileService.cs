@@ -9,6 +9,8 @@ namespace CrossFile.Services
         Task<Stream> GetFileStreamAsync(string fileName);
 
         Task SaveFileAsync(string fileName, Stream fileStream);
+
+        Task DeleteFileAsync(string fileName);
     }
 
 
@@ -27,7 +29,7 @@ namespace CrossFile.Services
 
             var filePath = Path.Combine(storeFolder, fileName);
 
-            return await Task.FromResult(new FileStream(filePath, FileMode.Open));
+            return new FileStream(filePath, FileMode.Open);
         }
 
         public async Task SaveFileAsync(string fileName, Stream fileStream)
@@ -45,6 +47,15 @@ namespace CrossFile.Services
             {
                 await fileStream.CopyToAsync(fs);
             }
+        }
+
+        public async Task DeleteFileAsync(string fileName)
+        {
+            var storeFolder = _configuration["StoreLocation"];
+            
+            var filePath = Path.Combine(storeFolder, fileName);
+            
+            File.Delete(filePath);
         }
     }
 }

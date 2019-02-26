@@ -23,5 +23,11 @@ namespace CrossFile.Controllers
         {
             return await _service.GetItemAsync(itemId);
         }
+
+        [HttpDelete("{itemId}")]
+        public async Task DeleteItem([FromRoute] string itemId)
+        {
+            await _service.DeleteItemAsync(itemId);
+        }
     }
 }
