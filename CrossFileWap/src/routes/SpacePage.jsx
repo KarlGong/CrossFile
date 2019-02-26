@@ -1,4 +1,4 @@
-import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction} from "antd-mobile";
+import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction, Toast} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -14,7 +14,7 @@ export default class SpacePage extends Component {
     spaceName = this.props.params.spaceName;
     @observable isRefreshing = false;
     @observable isLoadingMore = false;
-    @observable isLoadingToEnd = false;
+    @observable isLoadedToEnd = false;
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1.id !== row2.id,
     });
@@ -36,9 +36,7 @@ export default class SpacePage extends Component {
                 mode="light"
                 icon={<Icon type="left"/>}
                 onLeftClick={() => this.props.router.push("/home")}
-                rightContent={
-                    <span onClick={e => this.inputOpenFileRef.current.click()}>+</span>
-                }
+                rightContent={<span onClick={e => this.inputOpenFileRef.current.click()} style={{fontSize: "20px"}}>+</span>}
             >{this.spaceName}</NavBar>
 
             <ListView
@@ -51,11 +49,19 @@ export default class SpacePage extends Component {
                             {
                                 text: "Delete",
                                 onPress: () => {
-                                    axios.delete("/api/item/" + rowData.id).then(
-                                        response => {
-                                            this.items = this.items.filter(item => item.id !== rowData.id);
-                                            this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                                        });
+                                    Modal.alert("Delete", "Are you sure?", [
+                                        {text: "No", onPress: () => {}},
+                                        {
+                                            text: "Yes", onPress: () => {
+                                                axios.delete("/api/item/" + rowData.id).then(
+                                                    response => {
+                                                        this.items = this.items.filter(item => item.id !== rowData.id);
+                                                        this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                                                        Toast.success("Deleted successfully!", 1, undefined, false);
+                                                    });
+                                            }
+                                        },
+                                    ]);
                                 },
                                 className: "delete-button"
                             },
@@ -65,7 +71,7 @@ export default class SpacePage extends Component {
                             key={rowID}
                             thumb={<div className="thumb">{rowData.fileName.split(".").pop()}</div>}
                             multipleLine
-                            onClick={() => {}}
+                            onClick={() => {this.props.router.push("/space/" + this.spaceName + "/item/" + rowData.id)}}
                         >
                             {rowData.name}
                             <List.Item.Brief>
@@ -90,10 +96,10 @@ export default class SpacePage extends Component {
                 onEndReachedThreshold={0}
                 pageSize={10}
             >
-                <div style={{padding: "30px", textAlign: "center"}}>
+                <div style={{padding: "30px", textAlign: "center", color: "#888"}}>
                     {!this.isRefreshing && !this.items.length ? "No items" : null}
-                    {this.items.length && this.isLoadingToEnd ? "No more items" : null}
-                    {this.isLoadingMore ? <ActivityIndicator animating/> : null}
+                    {this.items.length && this.isLoadedToEnd ? "No more items" : null}
+                    {this.isLoadingMore || this.isRefreshing ? <ActivityIndicator size="large"/> : null}
                 </div>
             </ListView>
         </div>
@@ -116,18 +122,18 @@ export default class SpacePage extends Component {
             .then(response => {
                 this.items = response.data;
                 this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                this.isLoadingToEnd = response.data.length < 10;
+                this.isLoadedToEnd = response.data.length < 10;
             }).finally(() => this.isRefreshing = false);
     };
 
     loadMore = () => {
-        if (!this.isLoadingToEnd && !this.isLoadingMore) {
+        if (!this.isLoadedToEnd && !this.isLoadingMore) {
             this.isLoadingMore = true;
             axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
                 .then(response => {
                     this.items = this.items.concat(response.data);
                     this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                    this.isLoadingToEnd = response.data.length < 10;
+                    this.isLoadedToEnd = response.data.length < 10;
                 }).finally(() => this.isLoadingMore = false);
         }
     }
