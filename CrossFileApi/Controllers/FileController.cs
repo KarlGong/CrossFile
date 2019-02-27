@@ -22,7 +22,7 @@ namespace CrossFile.Controllers
         {
             new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", fileName);
+            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", fileName, true);
         }
     }
 }

@@ -12,7 +12,7 @@ export default class VideoPreview extends Component {
 
     render = () => {
         return <div className="video-preview">
-            <video webkit-playsinline="true" playsinline="true" x-webkit-airplay="allow" controlslist="nodownload" controls="controls" src={"/api/file/" + this.props.fileName}></video>
+            <video preload="auto" controls="true" playsinline="true" src={"/api/file/" + this.props.fileName} />
         </div>;
     };
 }
