@@ -21,7 +21,7 @@ export default class FilePreview extends Component {
     }
 
     render = () => {
-        let preview = <div className="error-msg">Cannot preview this file type.</div>;
+        let preview = <div className="error-msg">Cannot preview this file type {this.fileExt}</div>;
 
         if ([".jpg", ".jpeg", ".gif", ".png", ".bmp"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 10 * 1024 * 1024) {
