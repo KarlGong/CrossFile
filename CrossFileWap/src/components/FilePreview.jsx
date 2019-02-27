@@ -41,7 +41,7 @@ export default class FilePreview extends Component {
             } else {
                 preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 10MB.</div>;
             }
-        } else if ([".mp4", ".mov"].indexOf(this.fileExt) !== -1) {
+        } else if ([".mp4", ".mov", ".avi", ".wmv", ".flv"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 100 * 1024 * 1024) {
                 preview = <VideoPreview fileName={this.props.fileName}/>
             } else {
