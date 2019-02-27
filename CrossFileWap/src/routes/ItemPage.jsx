@@ -61,7 +61,7 @@ export default class ItemPage extends Component {
                 text: "Yes", onPress: () => {
                     axios.delete("/api/item/" + this.item.id).then(
                         response => {
-                            Toast.success("Deleted successfully!", 1, () => this.props.router.push("/space/" + this.spaceName));
+                            Toast.success("Deleted successfully!", 2, () => this.props.router.push("/space/" + this.spaceName));
                         });
                 }
             },

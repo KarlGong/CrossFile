@@ -44,7 +44,6 @@ export default class SpacePage extends Component {
                 dataSource={this.listViewDataSource}
                 renderRow={(rowData, sectionID, rowID) => {
                     return <SwipeAction
-                        autoClose
                         right={[
                             {
                                 text: "Delete",
@@ -57,7 +56,7 @@ export default class SpacePage extends Component {
                                                     response => {
                                                         this.items = this.items.filter(item => item.id !== rowData.id);
                                                         this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                                                        Toast.success("Deleted successfully!", 1, undefined, false);
+                                                        Toast.success("Deleted successfully!", 2, undefined, false);
                                                     });
                                             }
                                         },

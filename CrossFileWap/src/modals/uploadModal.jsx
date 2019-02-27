@@ -88,7 +88,7 @@ class UploadModal extends Component {
             }
         ).then(response => {
             this.visible = false;
-            Toast.success("Uploaded successfully!", undefined, undefined, false);
+            Toast.success("Uploaded successfully!", 2, undefined, false);
             this.props.onSuccess(response.data);
         }).finally(() => this.isUploading = false)
     };
