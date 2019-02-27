@@ -6,7 +6,7 @@ import axios from "axios";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
 import "./ItemPage.less";
-import ItemPreview from "~/components/ItemPreview";
+import FilePreview from "~/components/FilePreview";
 
 @observer
 export default class ItemPage extends Component {
@@ -28,7 +28,7 @@ export default class ItemPage extends Component {
             {this.isLoaded ?
                 <div className="container">
                     <div className="preview-container">
-                        <ItemPreview fileName={this.item.fileName} fileSize={this.item.size} />
+                        <FilePreview fileName={this.item.fileName} fileSize={this.item.size} />
                     </div>
                     <List>
                         <List.Item>
