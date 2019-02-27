@@ -6,7 +6,7 @@ import axios from "axios";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
 import "./ItemPage.less";
-import FilePreview from "~/components/FilePreview";
+import ItemPreview from "~/components/ItemPreview";
 
 @observer
 export default class ItemPage extends Component {
@@ -27,7 +27,9 @@ export default class ItemPage extends Component {
         return <div className="item-page">
             {this.isLoaded ?
                 <div className="container">
-                    <FilePreview fileName={this.item.fileName} fileSize={this.item.size} style={{width: "100%", height: "calc(100% - 201px)"}}/>
+                    <div className="preview-container">
+                        <ItemPreview fileName={this.item.fileName} fileSize={this.item.size} />
+                    </div>
                     <List>
                         <List.Item>
                             <InputItem defaultValue={this.item.name} editable={false}>Name</InputItem>
