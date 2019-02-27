@@ -4,7 +4,7 @@ namespace CrossFile.Services.Parameters
     {
         public string SpaceName { get; set; }
         
-        public int? FromId { get; set; }
+        public string FromId { get; set; }
         
         public int Size { get; set; }
     }

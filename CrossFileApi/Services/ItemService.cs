@@ -14,13 +14,13 @@ namespace CrossFile.Services
 {
     public interface IItemService
     {
-        Task<Item> GetItemAsync(int itemId);
+        Task<Item> GetItemAsync(String itemId);
 
         Task<List<Item>> GetItemsAsync(GetItemsParams ps);
 
         Task<Item> AddItemAsync(AddItemParams ps);
 
-        Task DeleteItemAsync(int itemId);
+        Task DeleteItemAsync(String itemId);
     }
 
     public class ItemService : IItemService
@@ -36,7 +36,7 @@ namespace CrossFile.Services
             _mapper = mapper;
         }
 
-        public async Task<Item> GetItemAsync(int itemId)
+        public async Task<Item> GetItemAsync(string itemId)
         {
             return await _context.Items.SingleAsync(i => i.Id == itemId);
         }
@@ -47,19 +47,22 @@ namespace CrossFile.Services
 
             if (ps.FromId != null)
             {
-                queryable = queryable.Where(i => i.Id < ps.FromId);
+                var item = await _context.Items.SingleAsync(i => i.Id == ps.FromId);
+                queryable = queryable.Where(i => i.InsertTime < item.InsertTime);
             }
 
-            return await queryable.OrderByDescending(i => i.Id).Take(ps.Size).ToListAsync();
+            return await queryable.OrderByDescending(i => i.InsertTime).Take(ps.Size).ToListAsync();
         }
 
         public async Task<Item> AddItemAsync(AddItemParams ps)
         {
-            var fileName = Guid.NewGuid().ToString() + ps.FileExt;
+            var itemId = Guid.NewGuid().ToString();
+            var fileName = itemId + ps.FileExt;
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
 
             var newItem = _mapper.Map<Item>(ps);
+            newItem.Id = itemId;
             newItem.Size = ps.FileStream.Length;
             newItem.FileName = fileName;
 
@@ -70,7 +73,7 @@ namespace CrossFile.Services
             return newItem;
         }
 
-        public async Task DeleteItemAsync(int itemId)
+        public async Task DeleteItemAsync(string itemId)
         {
             var item = await _context.Items.SingleAsync(i => i.Id == itemId);
 

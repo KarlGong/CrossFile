@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossFile.Migrations
 {
     [DbContext(typeof(CrossFileDbContext))]
-    [Migration("20190226064922_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190227121622_InitCreate")]
+    partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace CrossFile.Migrations
 
             modelBuilder.Entity("CrossFile.Models.Item", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("FileName");

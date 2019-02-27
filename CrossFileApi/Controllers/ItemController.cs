@@ -19,13 +19,13 @@ namespace CrossFile.Controllers
         }
 
         [HttpGet("{itemId}")]
-        public async Task<Item> GetItem([FromRoute] int itemId)
+        public async Task<Item> GetItem([FromRoute] string itemId)
         {
             return await _service.GetItemAsync(itemId);
         }
 
         [HttpDelete("{itemId}")]
-        public async Task DeleteItem([FromRoute] int itemId)
+        public async Task DeleteItem([FromRoute] string itemId)
         {
             await _service.DeleteItemAsync(itemId);
         }

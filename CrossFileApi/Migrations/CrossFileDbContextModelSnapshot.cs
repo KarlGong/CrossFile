@@ -19,7 +19,7 @@ namespace CrossFile.Migrations
 
             modelBuilder.Entity("CrossFile.Models.Item", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("FileName");

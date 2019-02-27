@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrossFile.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,8 +12,7 @@ namespace CrossFile.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(nullable: false),
                     SpaceName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),
