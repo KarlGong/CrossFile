@@ -5,6 +5,8 @@ import axios from "axios";
 import ImagePreview from "./ImagePreview";
 import TextPreview from "./TextPreview";
 import "./FilePreview.less";
+import path from "path";
+
 
 @observer
 export default class FilePreview extends Component {
@@ -16,20 +18,19 @@ export default class FilePreview extends Component {
 
     constructor(props) {
         super(props);
-        let fileNameParts = this.props.fileName.split(".");
-        this.fileExt = fileNameParts.length === 1 ? "" : fileNameParts.pop();
+        this.fileExt = path.extname(this.props.fileName);
     }
 
     render = () => {
         let preview = null;
 
-        if (["jpg", "jpeg", "gif", "png"].indexOf(this.fileExt) !== -1) {
+        if ([".jpg", ".jpeg", ".gif", ".png"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 10 * 1024 * 1024) {
                 preview = <ImagePreview fileName={this.props.fileName}/>
             } else {
                 preview = <div className="error-msg">Cannot preview image which size is greater than 10MB.</div>;
             }
-        } else if (["txt", ""].indexOf(this.fileExt) !== -1) {
+        } else if ([".txt"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 10 * 1024) {
                 preview = <TextPreview fileName={this.props.fileName}/>
             } else {

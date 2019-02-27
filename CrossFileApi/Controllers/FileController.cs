@@ -20,11 +20,9 @@ namespace CrossFile.Controllers
         [HttpGet("{fileName}")]
         public async Task<IActionResult> GetFile([FromRoute] string fileName)
         {
-            var provider = new FileExtensionContentTypeProvider();
-            var fileExt = Path.GetExtension(fileName);
-            var memi = provider.Mappings[fileExt];
+            new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return File(await _service.GetFileStreamAsync(fileName), memi, fileName);
+            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", fileName);
         }
     }
 }
