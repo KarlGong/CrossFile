@@ -1,10 +1,11 @@
-import {Button, WhiteSpace, WingBlank, InputItem, Toast } from "antd-mobile";
+import {Button, WhiteSpace, WingBlank, InputItem, Toast} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable} from "mobx";
 import Validator from "~/utils/Validator";
 import guid from "~/utils/guid";
 import global from "~/global";
+import logo from "~/assets/imgs/logo.png";
 import "./HomePage.less";
 
 @observer
@@ -27,7 +28,8 @@ export default class HomePage extends Component {
 
     render = () => {
         return <div className="home-page">
-            <div className="container">
+            <img className="logo" src={logo} alt="logo"/>
+            <div className="form">
                 <WingBlank>
                     <InputItem
                         placeholder="Enter a space name"
@@ -46,7 +48,7 @@ export default class HomePage extends Component {
                         type="primary"
                         disabled={this.validator.getResult("spaceName").status !== "success"}
                         onClick={e => this.props.router.push("/space/" + this.spaceName)}
-                    >Cross</Button>
+                    >CROSS</Button>
                 </WingBlank>
             </div>
         </div>;

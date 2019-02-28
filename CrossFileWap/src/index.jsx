@@ -8,6 +8,7 @@ import SpacePage from "~/routes/SpacePage";
 import ItemPage from "~/routes/ItemPage";
 import global from "~/global";
 import "./index.less";
+import "~/assets/imgs/favicon.ico";
 
 render(
     <AppContainer>
