@@ -5,6 +5,7 @@ import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
 import openUploadModal from "~/modals/uploadModal";
 import formatBytes from "~/utils/formatBytes";
+import FileTypeIcon from "~/components/FileTypeIcon";
 import moment from "moment";
 import "./SpacePage.less";
 
@@ -67,8 +68,8 @@ export default class SpacePage extends Component {
                         ]}
                     >
                         <List.Item
-                            key={rowID}
-                            thumb={<div className="thumb">{rowData.fileName.split(".").pop()}</div>}
+                            key={rowData.id}
+                            thumb={<div className="thumb"><FileTypeIcon fileName={rowData.fileName}/></div>}
                             multipleLine
                             onClick={() => {this.props.router.push("/space/" + this.spaceName + "/item/" + rowData.id)}}
                         >

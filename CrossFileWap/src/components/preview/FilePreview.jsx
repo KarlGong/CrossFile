@@ -23,29 +23,29 @@ export default class FilePreview extends Component {
     render = () => {
         let preview = <div className="error-msg">Cannot preview this file type {this.fileExt}</div>;
 
-        if ([".jpg", ".jpeg", ".gif", ".png", ".bmp"].indexOf(this.fileExt) !== -1) {
+        if ([".jpg", ".jpeg", ".gif", ".png"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 10 * 1024 * 1024) {
                 preview = <ImagePreview fileName={this.props.fileName}/>
             } else {
                 preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 10MB.</div>;
             }
-        } else if ([".txt", ".xml", ".html"].indexOf(this.fileExt) !== -1) {
+        } else if ([".txt"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 10 * 1024) {
                 preview = <TextPreview fileName={this.props.fileName}/>
             } else {
                 preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 10KB.</div>;
             }
-        } else if ([".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf"].indexOf(this.fileExt) !== -1) {
-            if (this.props.fileSize <= 10 * 1024 * 1024) {
-                preview = <AppPreview fileName={this.props.fileName}/>
-            } else {
-                preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 10MB.</div>;
-            }
-        } else if ([".mp4", ".mov", ".avi", ".wmv", ".flv"].indexOf(this.fileExt) !== -1) {
+        } else if ([".mp4", ".mov", ".avi", ".wmv"].indexOf(this.fileExt) !== -1) {
             if (this.props.fileSize <= 100 * 1024 * 1024) {
                 preview = <VideoPreview fileName={this.props.fileName}/>
             } else {
                 preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 100MB.</div>;
+            }
+        } else if ([".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf", ".csv"].indexOf(this.fileExt) !== -1) {
+            if (this.props.fileSize <= 10 * 1024 * 1024) {
+                preview = <AppPreview fileName={this.props.fileName}/>
+            } else {
+                preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 10MB.</div>;
             }
         }
 

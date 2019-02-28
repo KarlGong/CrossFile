@@ -6,7 +6,7 @@ import axios from "axios";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
 import "./ItemPage.less";
-import FilePreview from "~/components/FilePreview";
+import FilePreview from "~/components/preview/FilePreview";
 
 @observer
 export default class ItemPage extends Component {
