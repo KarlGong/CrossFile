@@ -7,6 +7,7 @@ import moment from "moment";
 import axios from "axios";
 import Validator from "~/utils/Validator";
 import formatBytes from "~/utils/formatBytes";
+import path from "path";
 import "./uploadModal.less";
 
 export default function openUploadModal(spaceName, file, onSuccess) {
@@ -29,12 +30,19 @@ class UploadModal extends Component {
     };
 
     @observable visible = true;
-    name = this.props.file.name;
     @observable isUploading = false;
     @observable uploadPercentage = 0;
     @observable uploadLoaded = 0;
     @observable uploadTotal = 0;
     uploadingCancelSource = null;
+
+    constructor (props) {
+        super(props);
+        this.name = this.props.file.name;
+        this.fileExt = path.extname(this.props.file.name);
+        this.fileNameWithoutExt = path.basename(this.props.file.name, this.fileExt);
+        this.fileExt = this.fileExt.toLowerCase();
+    }
 
     render = () => {
         return <Modal
@@ -53,15 +61,16 @@ class UploadModal extends Component {
                 <Progress percent={this.uploadPercentage} position="normal" unfilled={false}/>
                 <List.Item>
                     <InputItem
-                        placeholder={this.props.file.name}
+                        placeholder={this.fileNameWithoutExt}
                         editable={!this.isUploading}
-                        defaultValue={this.props.file.name}
-                        onChange={value => this.name = value || this.props.file.name}
+                        extra={this.fileExt}
+                        defaultValue={this.fileNameWithoutExt}
+                        onChange={value => this.name = (value || this.fileNameWithoutExt) + this.fileExt}
                     >Name</InputItem>
                     <InputItem defaultValue={formatBytes(this.props.file.size)} editable={false}>Size</InputItem>
                     {
-                        this.isUploading ? <Button type="warning" onClick={this.cancelUploading}>Cancel</Button>
-                            : <Button type="primary" onClick={this.uploadFile}>Upload</Button>
+                        this.isUploading ? <Button type="warning" style={{marginTop: "5px"}} onClick={this.cancelUploading}>Cancel</Button>
+                            : <Button type="primary" style={{marginTop: "5px"}} onClick={this.uploadFile}>Upload</Button>
                     }
 
                 </List.Item>
