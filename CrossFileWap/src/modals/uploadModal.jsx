@@ -11,6 +11,11 @@ import path from "path";
 import "./uploadModal.less";
 
 export default function openUploadModal(spaceName, file, onSuccess) {
+    if (file.size > 2 * 1024 * 1024 * 1024) {
+        Toast.fail("Cannot upload file size larger than 2GB.", 3, undefined, false);
+        return;
+    }
+
     const target = document.createElement("div");
     document.body.appendChild(target);
 
@@ -36,7 +41,7 @@ class UploadModal extends Component {
     @observable uploadTotal = 0;
     uploadingCancelSource = null;
 
-    constructor (props) {
+    constructor(props) {
         super(props);
         this.name = this.props.file.name;
         this.fileExt = path.extname(this.props.file.name);

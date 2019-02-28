@@ -35,6 +35,7 @@ namespace CrossFile.Controllers
         }
 
         [HttpPost("{spaceName}")]
+        [RequestSizeLimit(2_147_483_648)]
         public async Task<Item> AddItem([FromRoute] string spaceName)
         {
             var formFile = Request.Form.Files[0];

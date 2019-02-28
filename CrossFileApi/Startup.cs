@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,10 +32,11 @@ namespace CrossFile
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = long.MaxValue; });
 
             services.AddDbContextPool<CrossFileDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("mysql")));
-            
+
             services.AddAutoMapper(config =>
             {
                 config.AllowNullCollections = true;
@@ -74,7 +76,6 @@ namespace CrossFile
             var context = serviceProvider.GetService<CrossFileDbContext>();
 
             context.Database.Migrate();
-
         }
     }
 }
