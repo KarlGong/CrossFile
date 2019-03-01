@@ -26,8 +26,8 @@ export default class ItemModal extends Component {
     render = () => {
         return <Modal
             visible={true}
-            closable={false}
             className="item-modal"
+            maskClosable={false}
             width={800}
             footer={null}
             onCancel={e => this.props.router.push("/space/" + this.props.params.spaceName)}
