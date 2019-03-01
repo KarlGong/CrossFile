@@ -1,4 +1,4 @@
-import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction, Toast} from "antd-mobile";
+import {Layout, List, Card, Button, Popconfirm, message, Icon, Upload, Progress} from "antd";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -7,6 +7,8 @@ import openUploadModal from "~/modals/uploadModal";
 import formatBytes from "~/utils/formatBytes";
 import FileTypeIcon from "~/components/FileTypeIcon";
 import moment from "moment";
+import logo from "~/assets/imgs/logo-v.png";
+import guid from "~/utils/guid";
 import "./SpacePage.less";
 
 @observer
@@ -16,14 +18,13 @@ export default class SpacePage extends Component {
     @observable isRefreshing = false;
     @observable isLoadingMore = false;
     @observable isLoadedToEnd = false;
-    @observable listViewDataSource = new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1.id !== row2.id,
-    });
-    items = [];
+    @observable items = [];
+    loadedItems = [];
+    uploadingItems = [];
+    fixItems = [{type: "dragger", id: guid()}];
 
     constructor(props) {
         super(props);
-        this.inputOpenFileRef = React.createRef();
     }
 
     componentDidMount() {
@@ -31,109 +32,151 @@ export default class SpacePage extends Component {
     }
 
     render = () => {
-        return <div className="space-page">
-            <input ref={this.inputOpenFileRef} type="file" style={{display: "none"}} onChange={this.handleClickUpload}/>
-            <NavBar
-                mode="light"
-                icon={<Icon type="left"/>}
-                onLeftClick={() => this.props.router.push("/home")}
-                rightContent={<span onClick={e => this.inputOpenFileRef.current.click()} style={{fontSize: "20px"}}>+</span>}
-            >{this.spaceName}</NavBar>
-
-            <ListView
-                className="list"
-                dataSource={this.listViewDataSource}
-                renderRow={(rowData, sectionID, rowID) => {
-                    return <SwipeAction
-                        right={[
-                            {
-                                text: "Delete",
-                                onPress: () => {
-                                    Modal.alert("Delete", "Are you sure?", [
-                                        {text: "No", onPress: () => {}},
-                                        {
-                                            text: "Yes", onPress: () => {
-                                                axios.delete("/api/item/" + rowData.id).then(
-                                                    response => {
-                                                        this.items = this.items.filter(item => item.id !== rowData.id);
-                                                        this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                                                        Toast.success("Deleted successfully!", 2, undefined, false);
-                                                    });
-                                            }
-                                        },
-                                    ]);
-                                },
-                                className: "delete-button"
-                            },
-                        ]}
-                    >
-                        <List.Item
-                            key={rowData.id}
-                            thumb={<div className="thumb"><FileTypeIcon fileName={rowData.fileName}/></div>}
-                            multipleLine
-                            onClick={() => {this.props.router.push("/space/" + this.spaceName + "/item/" + rowData.id)}}
-                        >
-                            {rowData.name}
-                            <List.Item.Brief>
-                                {formatBytes(rowData.size)}
-                                <span className="insert-time">
-                                {moment().diff(moment(rowData.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?
-                                    moment(rowData.insertTime).format("YYYY-MM-DD HH:mm")
-                                    : moment(rowData.insertTime).fromNow()}
-                                </span>
-                            </List.Item.Brief>
-                        </List.Item>
-                    </SwipeAction>
-                }}
-                useBodyScroll
-                pullToRefresh={
-                    <PullToRefresh
-                        indicator={{activate: "release to refresh", deactivate: "pull to refresh", finish: "refreshed"}}
-                        refreshing={this.isRefreshing}
-                        onRefresh={this.refresh}
-                    />}
-                onEndReached={this.loadMore}
-                onEndReachedThreshold={0}
-                pageSize={10}
-            >
-                <div className="footer">
-                    {!this.isRefreshing && !this.items.length ? "No items" : null}
-                    {this.items.length && this.isLoadedToEnd ? "No more items" : null}
-                    {this.isLoadingMore || this.isRefreshing ? <ActivityIndicator size="large"/> : null}
-                </div>
-            </ListView>
-        </div>
+        return <Layout className="space-page">
+            <Layout.Header className="header">
+                <div onClick={e => this.props.router.push("/")} className="logo"><img src={logo} alt="logo"/></div>
+                <div className="title">{"/ " + this.spaceName}</div>
+            </Layout.Header>
+            <Layout.Content className="content">
+                <List
+                    loading={this.isRefreshing}
+                    loadMore={!this.isLoadedToEnd && !this.isRefreshing ? <div className="load-more">
+                        <Button onClick={this.loadMore} loading={this.isLoadingMore}>load more</Button>
+                    </div> : null}
+                    dataSource={this.items}
+                    renderItem={item => {
+                        if (item.type === "dragger") {
+                            return <div key={item.id} className="dragger-item">
+                                <Upload.Dragger
+                                    multiple
+                                    showUploadList={false}
+                                    customRequest={this.handleUpload}
+                                >
+                                    <p className="ant-upload-drag-icon">
+                                        <Icon type="plus"/>
+                                    </p>
+                                    <p>Click or drag files to this area to upload</p>
+                                </Upload.Dragger>
+                            </div>
+                        } else if (item.type === "uploading") {
+                            return <div key={item.id} className="item">
+                                <div className="icon"><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="name" title={item.fileName}>{item.fileName}</div>
+                                <div className="sub-text">
+                                    {`${formatBytes(item.uploadLoaded)} / ${formatBytes(item.uploadTotal)}`}
+                                </div>
+                                <Progress className="progress" percent={item.uploadPercentage}/>
+                                <div className="actions">
+                                    <div/>
+                                    <Popconfirm title="Cancel uploading?" okText="Yes" cancelText="No" okType="danger"
+                                                onConfirm={e => {
+                                                    item.cancelSource.cancel("Uploading cancelled!");
+                                                    this.uploadingItems = this.uploadingItems.filter(i => i.id !== item.id);
+                                                }}>
+                                        <Button type="danger" size="small" icon="close" shape="circle"/>
+                                    </Popconfirm>
+                                </div>
+                            </div>
+                        } else {
+                            return <div key={item.id} className="item">
+                                <div className="icon"><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="name" title={item.name}>{item.name}</div>
+                                <div className="sub-text">{formatBytes(item.size)}</div>
+                                <div className="sub-text">
+                                    {moment().diff(moment(item.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?
+                                        moment(item.insertTime).format("YYYY-MM-DD HH:mm")
+                                        : moment(item.insertTime).fromNow()}
+                                </div>
+                                <div className="actions">
+                                    <a href={"/api/file/" + item.fileName}>
+                                        <Button type="primary" size="small" icon="download" shape="circle"/>
+                                    </a>
+                                    <Popconfirm title="Delete?" okText="Yes" cancelText="No" okType="danger"
+                                                onConfirm={e => {
+                                                    axios.delete("/api/item/" + item.id).then(
+                                                        response => {
+                                                            this.loadedItems = this.loadedItems.filter(i => i.id !== item.id);
+                                                            this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+                                                            message.success("Item is deleted successfully!", 2);
+                                                        });
+                                                }}>
+                                        <Button type="danger" size="small" icon="delete" shape="circle"/>
+                                    </Popconfirm>
+                                </div>
+                            </div>
+                        }
+                    }}
+                />
+            </Layout.Content>
+        </Layout>
     };
 
-    handleClickUpload = (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            openUploadModal(this.spaceName, file, (item) => {
-                this.items = [item].concat(this.items);
-                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-            });
+    handleUpload = (e) => {
+        if (e.file.size > 2 * 1024 * 1024 * 1024) {
+            message.error("Cannot upload file larger than 2GB.", 2);
+            return;
         }
-        e.target.value = null; // clear the select file.
+        let uploadingItem = {
+            id: guid(),
+            type: "uploading",
+            fileName: e.file.name,
+            size: e.file.size,
+            cancelSource: axios.CancelToken.source(),
+            uploadLoaded: 0,
+            uploadTotal: 0,
+            uploadPercentage: 0
+        };
+        this.uploadingItems.unshift(uploadingItem);
+        this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+
+        let formData = new FormData();
+        formData.append(e.file.name, e.file);
+        axios.post("/api/space/" + this.spaceName, formData,
+            {
+                headers: {"Content-Type": "multipart/form-data"},
+                cancelToken: uploadingItem.cancelSource.token,
+                onUploadProgress: (event) => {
+                    if (event.lengthComputable) {
+                        uploadingItem.uploadLoaded = event.loaded;
+                        uploadingItem.uploadTotal = event.total;
+                        uploadingItem.uploadPercentage = + (event.loaded * 100 / event.total).toFixed(1);
+                        this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+                    }
+                }
+            }
+        ).then(response => {
+            message.success("Uploaded successfully!", 2);
+            this.uploadingItems = this.uploadingItems.filter(i => i.id !== uploadingItem.id);
+            this.loadedItems.unshift(response.data);
+            this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+        });
     };
 
     refresh = () => {
-        this.isRefreshing = true;
-        axios.get("/api/space/" + this.spaceName, {params: {size: 10}})
-            .then(response => {
-                this.items = response.data;
-                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                this.isLoadedToEnd = response.data.length < 10;
-            }).finally(() => this.isRefreshing = false);
+        if (!this.isRefreshing) {
+            this.isRefreshing = true;
+            axios.get("/api/space/" + this.spaceName, {params: {size: 20}})
+                .then(response => {
+                    this.loadedItems = response.data;
+                    this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+                    this.isLoadedToEnd = response.data.length < 20;
+                }).finally(() => this.isRefreshing = false);
+        }
     };
 
     loadMore = () => {
         if (!this.isLoadedToEnd && !this.isLoadingMore) {
             this.isLoadingMore = true;
-            axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
+            axios.get("/api/space/" + this.spaceName, {
+                params: {
+                    size: 20,
+                    fromId: this.loadedItems[this.loadedItems.length - 1].id
+                }
+            })
                 .then(response => {
-                    this.items = this.items.concat(response.data);
-                    this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                    this.isLoadedToEnd = response.data.length < 10;
+                    this.loadedItems = this.loadedItems.concat(response.data);
+                    this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+                    this.isLoadedToEnd = response.data.length < 20;
                 }).finally(() => this.isLoadingMore = false);
         }
     }

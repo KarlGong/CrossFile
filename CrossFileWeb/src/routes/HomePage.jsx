@@ -17,10 +17,10 @@ export default class HomePage extends Component {
         spaceName: (rule, value, callback, source, options) => {
             let errors = [];
             if (!value.length) {
-                errors.push(new Error("Space Name is required"));
+                errors.push(new Error("Cannot be empty"));
             }
             if (!/^[a-zA-Z0-9]+?$/.test(value)) {
-                errors.push(new Error("Space Name can only contain alphanumeric characters."))
+                errors.push(new Error("Only alphanumeric characters"))
             }
             callback(errors);
         }
@@ -31,14 +31,27 @@ export default class HomePage extends Component {
             <img className="logo" src={logo} alt="logo"/>
             <div className="form">
                 <Form>
-                    <Form.Item>
-                        <Input placeholder="Enter a space name"/>
+                    <Form.Item validateStatus={this.validator.getResult("spaceName").status}
+                               help={this.validator.getResult("spaceName").message}>
+                        <Input
+                            placeholder="Enter a space name"
+                            size="large"
+                            onChange={e => {
+                                this.spaceName = e.target.value;
+                                this.validator.resetResult("spaceName");
+                                this.validator.validate("spaceName");
+                            }}
+                        />
                     </Form.Item>
-                    <Button
-                        type="primary"
-                        disabled={this.validator.getResult("spaceName").status !== "success"}
-                        onClick={e => this.props.router.push("/space/" + this.spaceName)}
-                    >CROSS</Button>
+                    <Form.Item>
+                        <Button
+                            style={{width: "100%"}}
+                            type="primary"
+                            size="large"
+                            disabled={this.validator.getResult("spaceName").status !== "success"}
+                            onClick={e => this.props.router.push("/space/" + this.spaceName)}
+                        >CROSS</Button>
+                    </Form.Item>
                 </Form>
             </div>
         </div>;

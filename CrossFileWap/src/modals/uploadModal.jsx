@@ -12,7 +12,7 @@ import "./uploadModal.less";
 
 export default function openUploadModal(spaceName, file, onSuccess) {
     if (file.size > 2 * 1024 * 1024 * 1024) {
-        Toast.fail("Cannot upload file size larger than 2GB.", 3, undefined, false);
+        Toast.fail("Cannot upload file larger than 2GB.", 3, undefined, false);
         return;
     }
 
@@ -96,7 +96,7 @@ class UploadModal extends Component {
                     if (e.lengthComputable && this.isUploading) {
                         this.uploadLoaded = e.loaded;
                         this.uploadTotal = e.total;
-                        this.uploadPercentage = (e.loaded * 100 / e.total).toFixed(1);
+                        this.uploadPercentage = + (e.loaded * 100 / e.total).toFixed(1);
                     }
                 }
             }

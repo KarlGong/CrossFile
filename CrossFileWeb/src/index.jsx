@@ -4,7 +4,7 @@ import {render} from "react-dom";
 import {AppContainer} from "react-hot-loader";
 import App from "~/routes/App";
 import HomePage from "~/routes/HomePage";
-// import SpacePage from "~/routes/SpacePage";
+import SpacePage from "~/routes/SpacePage";
 // import ItemPage from "~/routes/ItemPage";
 import global from "~/global";
 import "./index.less";
@@ -16,7 +16,7 @@ render(
             <Route path="/" component={App}>
                 <IndexRedirect to="home"/>
                 <Route path="home" component={HomePage}/>
-                {/*<Route path="space/:spaceName" component={SpacePage}/>*/}
+                <Route path="space/:spaceName" component={SpacePage}/>
                 {/*<Route path="space/:spaceName/item/:itemId" component={ItemPage}/>*/}
             </Route>
         </Router>
