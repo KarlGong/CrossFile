@@ -9,18 +9,32 @@
   .preview-container {
     height: 400px;
   }
+  .info {
+    display: flex;
 
-  .name {
-    font-size: 16px;
-  }
+    .icon {
+      width: 60px;
+      height: 60px;
+    }
+    .detail {
+      margin-left: 10px;
+      .name {
+        font-size: 16px;
+      }
 
-  .size, .insert-time {
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.45);
+      .size, .insert-time {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.45);
+      }
+    }
   }
 
   .actions {
-    
-  }
+    display: flex;
+    justify-content: flex-end;
 
+    .ant-btn {
+      margin: 0 5px
+    }
+  }
 }
