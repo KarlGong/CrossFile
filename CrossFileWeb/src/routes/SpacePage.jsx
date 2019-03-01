@@ -60,7 +60,7 @@ export default class SpacePage extends Component {
                             </div>
                         } else if (item.type === "uploading") {
                             return <div key={item.id} className="item">
-                                <div className="icon"><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="icon" key={item.id}><FileTypeIcon fileName={item.fileName}/></div>
                                 <div className="name" title={item.fileName}>{item.fileName}</div>
                                 <div className="sub-text">
                                     {`${formatBytes(item.uploadLoaded)} / ${formatBytes(item.uploadTotal)}`}
@@ -79,7 +79,7 @@ export default class SpacePage extends Component {
                             </div>
                         } else {
                             return <div key={item.id} className="item">
-                                <div className="icon"><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="icon" key={item.id}><FileTypeIcon fileName={item.fileName}/></div>
                                 <div className="name" title={item.name}>{item.name}</div>
                                 <div className="sub-text">{formatBytes(item.size)}</div>
                                 <div className="sub-text">
@@ -108,6 +108,7 @@ export default class SpacePage extends Component {
                     }}
                 />
             </Layout.Content>
+            <div className="refresh"><Button icon="reload" size="large" shape="circle" type="primary" onClick={this.refresh}/></div>
         </Layout>
     };
 

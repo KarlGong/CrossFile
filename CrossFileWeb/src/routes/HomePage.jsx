@@ -41,6 +41,8 @@ export default class HomePage extends Component {
                                 this.validator.resetResult("spaceName");
                                 this.validator.validate("spaceName");
                             }}
+                            onPressEnter={e => this.validator.getResult("spaceName").status === "success"
+                                && this.props.router.push("/space/" + this.spaceName)}
                         />
                     </Form.Item>
                     <Form.Item>
