@@ -1,4 +1,4 @@
-import {InputItem, Icon, Modal, Button, WingBlank, List, Toast, Progress} from "antd-mobile";
+import {Button} from "antd";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";

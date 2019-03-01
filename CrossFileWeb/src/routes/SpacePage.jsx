@@ -3,7 +3,6 @@ import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
-import openUploadModal from "~/modals/uploadModal";
 import formatBytes from "~/utils/formatBytes";
 import FileTypeIcon from "~/components/FileTypeIcon";
 import moment from "moment";
@@ -79,7 +78,10 @@ export default class SpacePage extends Component {
                             </div>
                         } else {
                             return <div key={item.id} className="item">
-                                <div className="icon" key={item.id}><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="icon" key={item.id} onClick={e =>
+                                    this.props.router.push("/space/" + this.spaceName + "/item/" + item.id)}>
+                                    <FileTypeIcon fileName={item.fileName}/>
+                                </div>
                                 <div className="name" title={item.name}>{item.name}</div>
                                 <div className="sub-text">{formatBytes(item.size)}</div>
                                 <div className="sub-text">
@@ -108,7 +110,10 @@ export default class SpacePage extends Component {
                     }}
                 />
             </Layout.Content>
-            <div className="refresh"><Button icon="reload" size="large" shape="circle" type="primary" onClick={this.refresh}/></div>
+            <div className="refresh">
+                <Button icon="reload" size="large" shape="circle" type="primary" onClick={this.refresh}/>
+            </div>
+            {this.props.children}
         </Layout>
     };
 
@@ -140,7 +145,7 @@ export default class SpacePage extends Component {
                     if (event.lengthComputable) {
                         uploadingItem.uploadLoaded = event.loaded;
                         uploadingItem.uploadTotal = event.total;
-                        uploadingItem.uploadPercentage = + (event.loaded * 100 / event.total).toFixed(1);
+                        uploadingItem.uploadPercentage = +(event.loaded * 100 / event.total).toFixed(1);
                         this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
                     }
                 }

@@ -5,7 +5,7 @@ import {AppContainer} from "react-hot-loader";
 import App from "~/routes/App";
 import HomePage from "~/routes/HomePage";
 import SpacePage from "~/routes/SpacePage";
-// import ItemPage from "~/routes/ItemPage";
+import ItemModal from "~/modals/ItemModal";
 import global from "~/global";
 import "./index.less";
 import "~/assets/imgs/favicon.ico";
@@ -16,8 +16,9 @@ render(
             <Route path="/" component={App}>
                 <IndexRedirect to="home"/>
                 <Route path="home" component={HomePage}/>
-                <Route path="space/:spaceName" component={SpacePage}/>
-                {/*<Route path="space/:spaceName/item/:itemId" component={ItemPage}/>*/}
+                <Route path="space/:spaceName" component={SpacePage}>
+                    <Route path="item/:itemId" component={ItemModal}/>
+                </Route>
             </Route>
         </Router>
     </AppContainer>,
