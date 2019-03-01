@@ -47,7 +47,7 @@ export default class ItemModal extends Component {
                         {moment(this.item.insertTime).format("YYYY-MM-DD HH:mm")}
                     </div>
                     <div className="actions">
-                        <Button type="primary">Download</Button>
+                        <Button type="primary" >Download</Button>
                         <Button type="danger">Delete</Button>
                     </div>
                 </div>}
