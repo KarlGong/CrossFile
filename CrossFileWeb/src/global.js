@@ -9,7 +9,7 @@ axios.interceptors.response.use(
     error => {
         notification.error({
             message: error.message,
-            description: error.response.data,
+            description: error.response && error.response.data,
             duration: 0,
         });
         return Promise.reject(error);

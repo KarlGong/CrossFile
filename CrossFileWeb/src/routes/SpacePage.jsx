@@ -18,9 +18,9 @@ export default class SpacePage extends Component {
     @observable isLoadingMore = false;
     @observable isLoadedToEnd = false;
     @observable items = [];
-    loadedItems = [];
-    uploadingItems = [];
     fixItems = [{type: "dragger", id: guid()}];
+    uploadingItems = [];
+    loadedItems = [];
 
     constructor(props) {
         super(props);
@@ -71,6 +71,7 @@ export default class SpacePage extends Component {
                                                 onConfirm={e => {
                                                     item.cancelSource.cancel("Uploading cancelled!");
                                                     this.uploadingItems = this.uploadingItems.filter(i => i.id !== item.id);
+                                                    this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
                                                 }}>
                                         <Button type="danger" size="small" icon="close" shape="circle"/>
                                     </Popconfirm>
