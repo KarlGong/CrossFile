@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,8 @@ namespace CrossFile
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
+            
             services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = long.MaxValue; });
 
             services.AddDbContextPool<CrossFileDbContext>(options =>
@@ -44,7 +46,7 @@ namespace CrossFile
                 config.CreateMissingTypeMaps = true;
                 config.ValidateInlineMaps = false;
             });
-
+            
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IFileService, FileService>();
 
@@ -56,6 +58,8 @@ namespace CrossFile
         {
             InitApplication(serviceProvider);
 
+            // app.UseHttpsRedirection();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -66,7 +70,10 @@ namespace CrossFile
                 app.UseHsts();
             }
 
-//            app.UseHttpsRedirection();
+            app.UseCrossFileRewrite();
+            
+            app.UseStaticFiles();
+
             app.UseMvc();
         }
 
