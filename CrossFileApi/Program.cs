@@ -17,10 +17,16 @@ namespace CrossFile
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) {
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var isDevelopment = string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+                "Development", StringComparison.OrdinalIgnoreCase);
+
+            var appSettings = isDevelopment ? "appsettings.Development.json" : "appsettings.json";
+            
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hostsettings.json")
+                .AddJsonFile(appSettings)
                 .Build();
             
             return WebHost.CreateDefaultBuilder(args)
