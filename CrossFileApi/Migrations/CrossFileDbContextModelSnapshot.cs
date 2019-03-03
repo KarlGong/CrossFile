@@ -14,8 +14,7 @@ namespace CrossFile.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
 
             modelBuilder.Entity("CrossFile.Models.Item", b =>
                 {
@@ -24,8 +23,7 @@ namespace CrossFile.Migrations
 
                     b.Property<string>("FileName");
 
-                    b.Property<DateTime>("InsertTime")
-                        .ValueGeneratedOnAdd();
+                    b.Property<DateTime>("InsertTime");
 
                     b.Property<string>("Name");
 
@@ -33,10 +31,9 @@ namespace CrossFile.Migrations
 
                     b.Property<string>("SpaceName");
 
-                    b.Property<DateTime>("UpdateTime")
-                        .ValueGeneratedOnAddOrUpdate();
-
                     b.HasKey("Id");
+
+                    b.HasIndex("InsertTime");
 
                     b.HasIndex("SpaceName");
 

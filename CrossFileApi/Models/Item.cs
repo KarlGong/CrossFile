@@ -15,7 +15,5 @@ namespace CrossFile.Models
         public string FileName { get; set; }
         
         public DateTime InsertTime { get; set; }
-
-        public DateTime UpdateTime { get; set; }
     }
 }

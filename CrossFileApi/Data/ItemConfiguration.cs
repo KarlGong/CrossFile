@@ -11,10 +11,8 @@ namespace CrossFile.Data
             builder.HasKey(i => i.Id);
 
             builder.HasIndex(i => i.SpaceName);
-            
-            builder.Property(i => i.InsertTime).ValueGeneratedOnAdd();
 
-            builder.Property(i => i.UpdateTime).ValueGeneratedOnAddOrUpdate();
+            builder.HasIndex(i => i.InsertTime);
         }
     }
 }

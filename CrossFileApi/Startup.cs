@@ -33,11 +33,11 @@ namespace CrossFile
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            
+
             services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = long.MaxValue; });
 
             services.AddDbContextPool<CrossFileDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("mysql")));
+                options.UseSqlite(Configuration.GetConnectionString("sqlite")));
 
             services.AddAutoMapper(config =>
             {
@@ -46,7 +46,7 @@ namespace CrossFile
                 config.CreateMissingTypeMaps = true;
                 config.ValidateInlineMaps = false;
             });
-            
+
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IFileService, FileService>();
 
@@ -56,7 +56,7 @@ namespace CrossFile
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            InitApplication(serviceProvider);
+            InitApplication(serviceProvider, env);
 
             // app.UseHttpsRedirection();
 
@@ -71,14 +71,28 @@ namespace CrossFile
             }
 
             app.UseCrossFileRewrite();
-            
+
             app.UseStaticFiles();
 
             app.UseMvc();
         }
 
-        public void InitApplication(IServiceProvider serviceProvider)
+        public void InitApplication(IServiceProvider serviceProvider, IHostingEnvironment env)
         {
+            // create db file if not exist
+            var connectionString = Configuration.GetConnectionString("sqlite");
+            var connectionDict = connectionString.Split(";")
+                .Where(i => !string.IsNullOrEmpty(i))
+                .ToDictionary(i => i.Split("=")[0], i => i.Split("=")[1]);
+            
+            var sqliteDbFile = Path.Combine(env.ContentRootPath, connectionDict["Data Source"]);
+
+            if (!File.Exists(sqliteDbFile))
+            {
+                var fs = File.Create(sqliteDbFile);
+                fs.Close();
+            }
+
             // init database
             var context = serviceProvider.GetService<CrossFileDbContext>();
 

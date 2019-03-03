@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrossFile.Migrations
@@ -18,14 +17,16 @@ namespace CrossFile.Migrations
                     Size = table.Column<long>(nullable: false),
                     FileName = table.Column<string>(nullable: true),
                     InsertTime = table.Column<DateTime>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UpdateTime = table.Column<DateTime>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_InsertTime",
+                table: "Items",
+                column: "InsertTime");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_SpaceName",

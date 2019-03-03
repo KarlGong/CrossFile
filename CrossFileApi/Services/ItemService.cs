@@ -61,10 +61,15 @@ namespace CrossFile.Services
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
 
-            var newItem = _mapper.Map<Item>(ps);
-            newItem.Id = itemId;
-            newItem.Size = ps.FileStream.Length;
-            newItem.FileName = fileName;
+            var newItem = new Item()
+            {
+                Id = itemId,
+                SpaceName = ps.SpaceName,
+                Name = ps.Name,
+                Size = ps.FileStream.Length,
+                FileName = fileName,
+                InsertTime = DateTime.Now
+            };
 
             await _context.Items.AddAsync(newItem);
 
