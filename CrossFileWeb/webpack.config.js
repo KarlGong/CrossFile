@@ -64,7 +64,9 @@ module.exports = {
                     loader: "file-loader",
                     query: {
                         name: function (file) {
-                            return file.replace(/\\/g, "/").split("/src/")[1];
+                            var path = require("path");
+                            var dir = path.parse(file).dir.replace(/\\/g, "/").split("/src/")[1];
+                            return dir + "/[name].[hash].[ext]";
                         },
                     }
                 }],
