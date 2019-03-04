@@ -2,4 +2,5 @@ obj
 bin
 logs
 .idea
+store
 sqlite.db
