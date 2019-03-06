@@ -91,7 +91,7 @@ export default class SpacePage extends Component {
                                         : moment(item.insertTime).fromNow()}
                                 </div>
                                 <div className="actions">
-                                    <a href={"/api/file/" + item.fileName}>
+                                    <a href={"/api/file/" + item.fileName + "?name=" + item.name}>
                                         <Button type="primary" size="small" icon="download" shape="circle"/>
                                     </a>
                                     <Popconfirm title="Delete?" okText="Yes" cancelText="No" okType="danger"

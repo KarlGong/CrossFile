@@ -69,7 +69,6 @@ class UploadModal extends Component {
                         placeholder={this.fileNameWithoutExt}
                         editable={!this.isUploading}
                         extra={this.fileExt}
-                        defaultValue={this.fileNameWithoutExt}
                         onChange={value => this.name = (value || this.fileNameWithoutExt) + this.fileExt}
                     >Name</InputItem>
                     <InputItem defaultValue={formatBytes(this.props.file.size)} editable={false}>Size</InputItem>

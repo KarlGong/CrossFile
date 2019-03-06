@@ -18,11 +18,11 @@ namespace CrossFile.Controllers
         }
 
         [HttpGet("{fileName}")]
-        public async Task<IActionResult> GetFile([FromRoute] string fileName)
+        public async Task<IActionResult> GetFile([FromRoute] string fileName, [FromQuery] string name)
         {
             new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", fileName, true);
+            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", name ?? fileName, true);
         }
     }
 }

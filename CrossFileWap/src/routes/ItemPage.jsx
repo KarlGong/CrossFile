@@ -40,7 +40,7 @@ export default class ItemPage extends Component {
                                     <Button type="ghost" icon="left" size="small" onClick={() => this.props.router.push("/space/" + this.spaceName)}>Back</Button>
                                 </Flex.Item>
                                 <Flex.Item>
-                                    <a href={"/api/file/" + this.item.fileName}>
+                                    <a href={"/api/file/" + this.item.fileName + "?name=" + this.item.name}>
                                         <Button type="primary" size="small">Download</Button>
                                     </a>
                                 </Flex.Item>

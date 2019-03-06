@@ -55,7 +55,7 @@ export default class ItemModal extends Component {
                         </div>
                     </div>
                     <div className="actions">
-                        <a href={"/api/file/" + this.item.fileName}>
+                        <a href={"/api/file/" + this.item.fileName + "?name=" + this.item.name}>
                             <Button type="primary">Download</Button>
                         </a>
                         <Popconfirm title="Delete?" okText="Yes" cancelText="No" okType="danger"
