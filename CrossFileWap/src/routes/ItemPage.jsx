@@ -1,12 +1,15 @@
-import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, InputItem, Button, Flex, Toast} from "antd-mobile";
+import {NavBar, Icon, Modal, PullToRefresh, ListView, List, Popover, InputItem, Button, Flex, Toast, ActivityIndicator} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
-import "./ItemPage.less";
 import FilePreview from "~/components/preview/FilePreview";
+import qrCodeIcon from "~/assets/icons/qrcode.svg";
+import QRCode from "qrcode.react";
+import cs from "classnames";
+import "./ItemPage.less";
 
 @observer
 export default class ItemPage extends Component {
@@ -15,6 +18,7 @@ export default class ItemPage extends Component {
     itemId = this.props.params.itemId;
     @observable isLoaded = false;
     @observable item = {};
+    @observable showQRCode = false;
 
     componentDidMount = () => {
         axios.get("/api/item/" + this.itemId).then((response) => {
@@ -28,7 +32,13 @@ export default class ItemPage extends Component {
             {this.isLoaded ?
                 <div className="container">
                     <div className="preview-container">
-                        <FilePreview fileName={this.item.fileName} fileSize={this.item.size} />
+                        <FilePreview fileName={this.item.fileName} fileSize={this.item.size}/>
+                        <div className={cs("qrcode", {hidden: !this.showQRCode})} onClick={e => this.showQRCode = false}>
+                            <QRCode value={window.location.href} size={256}/>
+                        </div>
+                        <div className="qrcode-icon" onClick={e => this.showQRCode = true}>
+                            <img src={qrCodeIcon}/>
+                        </div>
                     </div>
                     <List>
                         <List.Item>

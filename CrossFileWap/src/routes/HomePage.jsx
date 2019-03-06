@@ -40,6 +40,8 @@ export default class HomePage extends Component {
                         }}
                         error={this.validator.getResult("spaceName").status === "error"}
                         onErrorClick={e => Toast.info(this.validator.getResult("spaceName").message, 2, undefined, false)}
+                        onVirtualKeyboardConfirm={val => this.validator.getResult("spaceName").status !== "success"
+                            && this.props.router.push("/space/" + this.spaceName)}
                     />
                 </WingBlank>
                 <WhiteSpace size="lg"/>

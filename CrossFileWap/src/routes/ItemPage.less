@@ -12,7 +12,33 @@
     height: 100%;
 
     .preview-container {
-      height: calc(~"100% - 201px")
+      height: calc(~"100% - 201px");
+      position: relative;
+
+      .qrcode {
+        top: 0;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #cbcbcb;
+        z-index: 2;
+
+        &.hidden {
+          display: none;
+        }
+      }
+
+      .qrcode-icon {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        left: 10px;
+        bottom: 30px;
+        z-index: 1;
+      }
     }
   }
 
