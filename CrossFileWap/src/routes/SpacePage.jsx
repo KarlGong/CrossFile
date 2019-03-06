@@ -129,7 +129,7 @@ export default class SpacePage extends Component {
     };
 
     loadMore = () => {
-        if (!this.isLoadedToEnd && !this.isLoadingMore && this.items.length) {
+        if (!this.isLoadedToEnd && !this.isLoadingMore && !this.isRefreshing && this.items.length) {
             this.isLoadingMore = true;
             axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
                 .then(response => {
