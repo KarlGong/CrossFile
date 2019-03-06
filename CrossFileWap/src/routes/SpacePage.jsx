@@ -117,17 +117,19 @@ export default class SpacePage extends Component {
     };
 
     refresh = () => {
-        this.isRefreshing = true;
-        axios.get("/api/space/" + this.spaceName, {params: {size: 10}})
-            .then(response => {
-                this.items = response.data;
-                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-                this.isLoadedToEnd = response.data.length < 10;
-            }).finally(() => this.isRefreshing = false);
+        if (!this.isRefreshing) {
+            this.isRefreshing = true;
+            axios.get("/api/space/" + this.spaceName, {params: {size: 10}})
+                .then(response => {
+                    this.items = response.data;
+                    this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                    this.isLoadedToEnd = response.data.length < 10;
+                }).finally(() => this.isRefreshing = false);
+        }
     };
 
     loadMore = () => {
-        if (!this.isLoadedToEnd && !this.isLoadingMore) {
+        if (!this.isLoadedToEnd && !this.isLoadingMore && this.items.length) {
             this.isLoadingMore = true;
             axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
                 .then(response => {
