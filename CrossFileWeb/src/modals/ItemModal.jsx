@@ -1,4 +1,4 @@
-import {Layout, Menu, Input, Icon, Modal, Spin, Button, Popconfirm, message} from "antd";
+import {Layout, Menu, Input, Icon, Modal, Spin, Button, Popconfirm, message, Popover} from "antd";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -7,6 +7,7 @@ import FilePreview from "~/components/preview/FilePreview";
 import FileTypeIcon from "~/components/FileTypeIcon";
 import axios from "axios";
 import moment from "moment";
+import QRCode from "qrcode.react";
 import "./ItemModal.less";
 
 @observer
@@ -55,6 +56,9 @@ export default class ItemModal extends Component {
                         </div>
                     </div>
                     <div className="actions">
+                        <Popover content={<QRCode value={window.location.href}/>}>
+                            <Icon type="qrcode" />
+                        </Popover>
                         <a href={"/api/file/" + this.item.fileName + "?name=" + this.item.name}>
                             <Button type="primary">Download</Button>
                         </a>
