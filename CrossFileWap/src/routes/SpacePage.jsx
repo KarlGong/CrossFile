@@ -14,6 +14,7 @@ export default class SpacePage extends Component {
 
     spaceName = this.props.params.spaceName;
     @observable isRefreshing = false;
+    @observable isInitLoaded = false;
     @observable isLoadingMore = false;
     @observable isLoadedToEnd = false;
     @observable listViewDataSource = new ListView.DataSource({
@@ -87,22 +88,38 @@ export default class SpacePage extends Component {
                 }}
                 useBodyScroll
                 pullToRefresh={
-                    <PullToRefresh
-                        indicator={{activate: "release to refresh", deactivate: "pull to refresh", finish: "refreshed"}}
-                        refreshing={this.isRefreshing}
-                        onRefresh={this.refresh}
-                    />}
+                    this.isInitLoaded ?
+                        <PullToRefresh
+                            indicator={{activate: "release to refresh", deactivate: "pull to refresh", finish: "refreshed"}}
+                            refreshing={this.isRefreshing}
+                            onRefresh={this.refresh}
+                        /> : null}
                 onEndReached={this.loadMore}
                 onEndReachedThreshold={0}
                 pageSize={10}
             >
                 <div className="footer">
-                    {!this.isRefreshing && !this.items.length ? "No items" : null}
-                    {this.items.length && this.isLoadedToEnd ? "No more items" : null}
-                    {this.isLoadingMore || this.isRefreshing ? <ActivityIndicator size="large"/> : null}
+                    {this.renderListFooter()}
                 </div>
             </ListView>
         </div>
+    };
+
+    renderListFooter = () => {
+        if (this.isInitLoaded) {
+            if (this.items.length) {
+                if (this.isLoadedToEnd) {
+                    return "No more items";
+                }
+                if (this.isLoadingMore) {
+                    return <ActivityIndicator size="large"/>;
+                }
+            } else {
+                return "No items";
+            }
+        } else {
+            return <ActivityIndicator size="large"/>;
+        }
     };
 
     handleClickUpload = (e) => {
@@ -124,12 +141,15 @@ export default class SpacePage extends Component {
                     this.items = response.data;
                     this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
                     this.isLoadedToEnd = response.data.length < 10;
+                    if (!this.isInitLoaded) {
+                        this.isInitLoaded = true;
+                    }
                 }).finally(() => this.isRefreshing = false);
         }
     };
 
     loadMore = () => {
-        if (!this.isLoadedToEnd && !this.isLoadingMore && !this.isRefreshing && this.items.length) {
+        if (!this.isLoadingMore && !this.isLoadedToEnd && !this.isRefreshing && this.items.length) {
             this.isLoadingMore = true;
             axios.get("/api/space/" + this.spaceName, {params: {size: 10, fromId: this.items[this.items.length - 1].id}})
                 .then(response => {
