@@ -16,7 +16,7 @@ namespace CrossFile.Migrations
                     Name = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),
                     FileName = table.Column<string>(nullable: true),
-                    InsertTime = table.Column<DateTime>(nullable: false)
+                    InsertTime = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
                 {

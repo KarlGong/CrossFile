@@ -23,7 +23,7 @@ namespace CrossFile.Migrations
 
                     b.Property<string>("FileName");
 
-                    b.Property<DateTime>("InsertTime");
+                    b.Property<DateTimeOffset>("InsertTime");
 
                     b.Property<string>("Name");
 

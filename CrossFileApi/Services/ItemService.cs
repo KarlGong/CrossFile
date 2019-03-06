@@ -68,7 +68,7 @@ namespace CrossFile.Services
                 Name = ps.Name,
                 Size = ps.FileStream.Length,
                 FileName = fileName,
-                InsertTime = DateTime.Now
+                InsertTime = DateTime.UtcNow
             };
 
             await _context.Items.AddAsync(newItem);

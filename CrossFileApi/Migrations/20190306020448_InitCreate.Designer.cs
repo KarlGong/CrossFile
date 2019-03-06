@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossFile.Migrations
 {
     [DbContext(typeof(CrossFileDbContext))]
-    [Migration("20190303055129_InitCreate")]
+    [Migration("20190306020448_InitCreate")]
     partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace CrossFile.Migrations
 
                     b.Property<string>("FileName");
 
-                    b.Property<DateTime>("InsertTime");
+                    b.Property<DateTimeOffset>("InsertTime");
 
                     b.Property<string>("Name");
 
