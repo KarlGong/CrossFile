@@ -4,8 +4,9 @@ import ImagePreview from "./ImagePreview";
 import TextPreview from "./TextPreview";
 import AppPreview from "./AppPreview";
 import VideoPreview from "./VideoPreview";
-import "./FilePreview.less";
 import path from "path";
+import global from "~/global";
+import "./FilePreview.less";
 
 
 @observer
@@ -41,7 +42,7 @@ export default class FilePreview extends Component {
             } else {
                 preview = <div className="error-msg">Cannot preview {this.fileExt} which size is greater than 100MB.</div>;
             }
-        } else if ([".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf", ".csv"].indexOf(this.fileExt) !== -1) {
+        } else if ([".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf", ".csv"].indexOf(this.fileExt) !== -1 && global.userAgent.os() === "iOS") {
             if (this.props.fileSize <= 10 * 1024 * 1024) {
                 preview = <AppPreview fileName={this.props.fileName}/>
             } else {
