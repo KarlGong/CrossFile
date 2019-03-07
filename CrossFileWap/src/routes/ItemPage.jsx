@@ -61,7 +61,7 @@ export default class ItemPage extends Component {
                         </List.Item>
                     </List>
                 </div>
-                : <div className="loading"><ActivityIndicator size="large"/></div>
+                : <div className="loading"><ActivityIndicator/></div>
             }
         </div>
     };
