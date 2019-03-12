@@ -8,12 +8,14 @@ import FileTypeIcon from "~/components/FileTypeIcon";
 import axios from "axios";
 import moment from "moment";
 import QRCode from "qrcode.react";
+import event from "~/utils/event";
 import "./ItemModal.less";
 
 @observer
 export default class ItemModal extends Component {
 
     @observable item = {};
+    @observable isVisible = true;
     @observable isLoading = false;
 
     componentDidMount = () => {
@@ -26,12 +28,13 @@ export default class ItemModal extends Component {
 
     render = () => {
         return <Modal
-            visible={true}
+            visible={this.isVisible}
             className="item-modal"
             maskClosable={false}
             width={800}
             footer={null}
-            onCancel={e => this.props.router.push("/space/" + this.props.params.spaceName)}
+            afterClose={e => this.props.router.push("/space/" + this.props.params.spaceName)}
+            onCancel={e => this.isVisible = false}
         >
             {this.isLoading ? <div className="loading"><Spin/></div>
                 : <div>
@@ -66,7 +69,8 @@ export default class ItemModal extends Component {
                                     onConfirm={e => {
                                         axios.delete("/api/item/" + this.item.id).then(
                                             response => {
-                                                this.props.router.push("/space/" + this.props.params.spaceName);
+                                                this.isVisible = false;
+                                                event.emit("item-deleted", this.item);
                                                 message.success("Item is deleted successfully!", 2);
                                             });
                                     }}>

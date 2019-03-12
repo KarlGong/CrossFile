@@ -9,6 +9,7 @@ import moment from "moment";
 import logo from "~/assets/imgs/logo-v.png";
 import guid from "~/utils/guid";
 import "./SpacePage.less";
+import event from "~/utils/event";
 
 @observer
 export default class SpacePage extends Component {
@@ -21,14 +22,23 @@ export default class SpacePage extends Component {
     fixItems = [{type: "dragger", id: guid()}];
     uploadingItems = [];
     loadedItems = [];
+    eventDisposers = [];
 
     constructor(props) {
         super(props);
     }
 
     componentDidMount() {
+        this.eventDisposers.push(event.on("item-deleted", item => {
+            this.loadedItems = this.loadedItems.filter(i => i.id !== item.id);
+            this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
+        }));
         this.refresh();
     }
+
+    componentWillUnMount = () => {
+        this.eventDisposers.map((disposer) => disposer());
+    };
 
     render = () => {
         return <Layout className="space-page">
