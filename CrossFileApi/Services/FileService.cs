@@ -47,6 +47,7 @@ namespace CrossFile.Services
             using (var fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite))
             {
                 await fileStream.CopyToAsync(fs);
+                fileStream.Position = 0;
             }
         }
 

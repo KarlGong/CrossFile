@@ -3,14 +3,16 @@ using System;
 using CrossFile.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CrossFile.Migrations
 {
     [DbContext(typeof(CrossFileDbContext))]
-    partial class CrossFileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190312073708_AddThumbFileName")]
+    partial class AddThumbFileName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

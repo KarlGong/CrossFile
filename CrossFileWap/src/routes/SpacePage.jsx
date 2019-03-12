@@ -5,7 +5,7 @@ import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
 import openUploadModal from "~/modals/uploadModal";
 import formatBytes from "~/utils/formatBytes";
-import FileTypeIcon from "~/components/FileTypeIcon";
+import ItemThumb from "~/components/ItemThumb";
 import moment from "moment";
 import "./SpacePage.less";
 
@@ -44,7 +44,7 @@ export default class SpacePage extends Component {
             <ListView
                 className="list"
                 dataSource={this.listViewDataSource}
-                renderRow={(rowData, sectionID, rowID) => {
+                renderRow={(item, sectionID, rowID) => {
                     return <SwipeAction
                         right={[
                             {
@@ -54,9 +54,9 @@ export default class SpacePage extends Component {
                                         {text: "No", onPress: () => {}},
                                         {
                                             text: "Yes", onPress: () => {
-                                                axios.delete("/api/item/" + rowData.id).then(
+                                                axios.delete("/api/item/" + item.id).then(
                                                     response => {
-                                                        this.items = this.items.filter(item => item.id !== rowData.id);
+                                                        this.items = this.items.filter(item => item.id !== item.id);
                                                         this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
                                                         Toast.success("Deleted successfully!", 2, undefined, false);
                                                     });
@@ -69,18 +69,18 @@ export default class SpacePage extends Component {
                         ]}
                     >
                         <List.Item
-                            key={rowData.id}
-                            thumb={<div className="thumb"><FileTypeIcon fileName={rowData.fileName}/></div>}
+                            key={item.id}
+                            thumb={<div className="thumb"><ItemThumb item={item}/></div>}
                             multipleLine
-                            onClick={() => {this.props.router.push("/space/" + this.spaceName + "/item/" + rowData.id)}}
+                            onClick={() => {this.props.router.push("/space/" + this.spaceName + "/item/" + item.id)}}
                         >
-                            {rowData.name}
+                            {item.name}
                             <List.Item.Brief>
-                                {formatBytes(rowData.size)}
+                                {formatBytes(item.size)}
                                 <span className="insert-time">
-                                {moment().diff(moment(rowData.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?
-                                    moment(rowData.insertTime).format("YYYY-MM-DD HH:mm")
-                                    : moment(rowData.insertTime).fromNow()}
+                                {moment().diff(moment(item.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?
+                                    moment(item.insertTime).format("YYYY-MM-DD HH:mm")
+                                    : moment(item.insertTime).fromNow()}
                                 </span>
                             </List.Item.Brief>
                         </List.Item>

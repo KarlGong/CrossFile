@@ -27,12 +27,15 @@ namespace CrossFile.Services
     {
         private readonly CrossFileDbContext _context;
         private readonly IFileService _fileService;
+        private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public ItemService(CrossFileDbContext context, IFileService fileService, IMapper mapper)
+        public ItemService(CrossFileDbContext context, IFileService fileService, IImageService imageService,
+            IMapper mapper)
         {
             _context = context;
             _fileService = fileService;
+            _imageService = imageService;
             _mapper = mapper;
         }
 
@@ -60,6 +63,17 @@ namespace CrossFile.Services
             var fileName = itemId + ps.FileExt;
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
+            
+            string thumbFileName = null;
+
+            if (new[] {".jpg", ".jpeg", ".gif", ".png"}.Contains(ps.FileExt, StringComparer.OrdinalIgnoreCase))
+            {
+                using (var thumbStream = await _imageService.ResizeToPng(ps.FileStream, 128, 128))
+                {
+                    thumbFileName = itemId + "-thumb.png";
+                    await _fileService.SaveFileAsync(thumbFileName, thumbStream);
+                }
+            }
 
             var newItem = new Item()
             {
@@ -68,6 +82,7 @@ namespace CrossFile.Services
                 Name = ps.Name,
                 Size = ps.FileStream.Length,
                 FileName = fileName,
+                ThumbFileName = thumbFileName,
                 InsertTime = DateTime.UtcNow
             };
 
@@ -83,6 +98,11 @@ namespace CrossFile.Services
             var item = await _context.Items.SingleAsync(i => i.Id == itemId);
 
             await _fileService.DeleteFileAsync(item.FileName);
+
+            if (item.ThumbFileName != null)
+            {
+                await _fileService.DeleteFileAsync(item.ThumbFileName);
+            }
 
             _context.Items.Remove(item);
 

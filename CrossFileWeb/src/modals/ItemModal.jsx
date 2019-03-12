@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import formatBytes from "~/utils/formatBytes";
 import FilePreview from "~/components/preview/FilePreview";
-import FileTypeIcon from "~/components/FileTypeIcon";
+import ItemThumb from "~/components/ItemThumb";
 import axios from "axios";
 import moment from "moment";
 import QRCode from "qrcode.react";
@@ -44,7 +44,7 @@ export default class ItemModal extends Component {
                     <hr/>
                     <div className="info">
                         <div className="icon">
-                            <FileTypeIcon fileName={this.item.fileName}/>
+                            <ItemThumb item={this.item}/>
                         </div>
                         <div className="detail">
                             <div className="name">

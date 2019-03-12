@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
 import formatBytes from "~/utils/formatBytes";
-import FileTypeIcon from "~/components/FileTypeIcon";
+import ItemThumb from "~/components/ItemThumb";
 import moment from "moment";
 import logo from "~/assets/imgs/logo-v.png";
 import guid from "~/utils/guid";
@@ -69,7 +69,7 @@ export default class SpacePage extends Component {
                             </div>
                         } else if (item.type === "uploading") {
                             return <div key={item.id} className="item">
-                                <div className="icon" key={item.id}><FileTypeIcon fileName={item.fileName}/></div>
+                                <div className="icon" key={item.id}><ItemThumb item={item}/></div>
                                 <div className="name" title={item.fileName}>{item.fileName}</div>
                                 <div className="sub-text">
                                     {`${formatBytes(item.uploadLoaded)} / ${formatBytes(item.uploadTotal)}`}
@@ -91,7 +91,7 @@ export default class SpacePage extends Component {
                             return <div key={item.id} className="item">
                                 <div className="icon" key={item.id} onClick={e =>
                                     this.props.router.push("/space/" + this.spaceName + "/item/" + item.id)}>
-                                    <FileTypeIcon fileName={item.fileName}/>
+                                    <ItemThumb item={item}/>
                                 </div>
                                 <div className="name" title={item.name}>{item.name}</div>
                                 <div className="sub-text">{formatBytes(item.size)}</div>

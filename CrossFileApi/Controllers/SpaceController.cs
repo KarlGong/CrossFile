@@ -41,13 +41,16 @@ namespace CrossFile.Controllers
             var formFile = Request.Form.Files[0];
             var fileExt = Path.GetExtension(formFile.FileName);
 
-            return await _service.AddItemAsync(new AddItemParams()
+            using (var fileStream = formFile.OpenReadStream())
             {
-                Name = formFile.Name,
-                FileExt = fileExt,
-                SpaceName = spaceName,
-                FileStream = formFile.OpenReadStream()
-            });
+                return await _service.AddItemAsync(new AddItemParams()
+                {
+                    Name = formFile.Name,
+                    FileExt = fileExt,
+                    SpaceName = spaceName,
+                    FileStream = fileStream
+                });
+            }
         }
     }
 }

@@ -14,6 +14,8 @@ namespace CrossFile.Models
         
         public string FileName { get; set; }
         
+        public string ThumbFileName { get; set; }
+        
         public DateTimeOffset InsertTime { get; set; }
     }
 }

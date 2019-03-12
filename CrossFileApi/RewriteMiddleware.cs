@@ -18,11 +18,11 @@ namespace CrossFile
     {
         private static readonly Regex ApiRegex = new Regex("^/api/.*$");
 
-        private static readonly string[] MobileKeywords = new string[3]
+        private static readonly string[] MobileKeywords = new[]
         {
             "Android", "iPhone", "iPad"
         };
-        
+
         private readonly RequestDelegate _next;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -41,10 +41,10 @@ namespace CrossFile
             }
 
             var userAgent = context.Request.Headers["User-Agent"].ToString();
-            
+
             var root = MobileKeywords.Any(keyword => userAgent.Contains(keyword)) ? "/wap" : "/web";
 
-            if (new string[2] {"GET", "HEAD"}.Contains(context.Request.Method, StringComparer.OrdinalIgnoreCase)
+            if (new[] {"GET", "HEAD"}.Contains(context.Request.Method, StringComparer.OrdinalIgnoreCase)
                 && !File.Exists(Path.Join(_hostingEnvironment.WebRootPath, root, context.Request.Path.ToString())))
             {
                 context.Request.Path = root + "/index.html";

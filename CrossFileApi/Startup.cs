@@ -47,8 +47,9 @@ namespace CrossFile
                 config.ValidateInlineMaps = false;
             });
 
-            services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IImageService, ImageService>();
 
             return services.BuildServiceProvider();
         }
