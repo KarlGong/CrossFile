@@ -56,7 +56,7 @@ export default class SpacePage extends Component {
                                             text: "Yes", onPress: () => {
                                                 axios.delete("/api/item/" + item.id).then(
                                                     response => {
-                                                        this.items = this.items.filter(item => item.id !== item.id);
+                                                        this.items = this.items.filter(i => i.id !== item.id);
                                                         this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
                                                         Toast.success("Deleted successfully!", 2, undefined, false);
                                                     });
