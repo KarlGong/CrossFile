@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace CrossFile
 {
@@ -59,21 +60,25 @@ namespace CrossFile
         {
             InitApplication(serviceProvider, env);
 
-            // app.UseHttpsRedirection();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
             app.UseCrossFileRewrite();
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    if (!ctx.File.Name.EndsWith(".html"))
+                    {
+                        var maxAge = new TimeSpan(365, 0, 0, 0);
+                        ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                            "public,max-age=" + maxAge.TotalSeconds;
+                    }
+                }
+            });
 
             app.UseMvc();
         }

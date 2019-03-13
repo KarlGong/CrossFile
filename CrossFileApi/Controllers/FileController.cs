@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CrossFile.Models;
 using CrossFile.Services;
@@ -22,7 +24,12 @@ namespace CrossFile.Controllers
         {
             new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return File(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream", name ?? fileName, true);
+            return new FileStreamResult(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream")
+            {
+                FileDownloadName = name ?? fileName,
+                LastModified = DateTimeOffset.MinValue,
+                EnableRangeProcessing = true
+            };
         }
     }
 }

@@ -19,34 +19,32 @@ namespace CrossFile.Services
             using (var inputStream = new SKManagedStream(fileStream))
             using (var original = SKBitmap.Decode(inputStream))
             {
-                if (original.Width <= maxWidth && original.Height <= maxHeight)
-                {
-                    var returnStream = new MemoryStream();
-                    fileStream.Position = 0;
-                    await fileStream.CopyToAsync(returnStream);
-                    fileStream.Position = 0;
-                    returnStream.Position = 0;
-                    return returnStream;
-                }
+                var width = 0.0;
+                var height = 0.0;
+                
+                var originalWidth = (double) original.Width;
+                var originalHeight = (double) original.Height;
 
-                var width = 0;
-                var height = 0;
-
-                if ((original.Width / original.Height) > (maxWidth / maxHeight))
+                var _maxWidth = (double) maxWidth;
+                var _maxHeight = (double) maxHeight;
+                
+                if ((originalWidth / originalHeight) > (_maxWidth / _maxHeight))
                 {
-                    width = maxWidth;
-                    height = (width * original.Height) / original.Width;
+                    width = _maxWidth;
+                    height = (width * originalHeight) / originalWidth;
                 }
                 else
                 {
-                    height = maxHeight;
-                    width = (height * original.Width) / original.Height;
+                    height = _maxHeight;
+                    width = (height * originalWidth) / originalHeight;
                 }
 
-                using (var resized = original.Resize(new SKImageInfo(width, height), SKFilterQuality.High))
+                using (var resized = original.Resize(new SKImageInfo((int) Math.Round(width), (int) Math.Round(height)),
+                    SKFilterQuality.High))
                 {
                     using (var image = SKImage.FromBitmap(resized))
                     {
+                        fileStream.Position = 0;
                         return image.Encode(SKEncodedImageFormat.Png, 100).AsStream();
                     }
                 }
