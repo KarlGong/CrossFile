@@ -5,6 +5,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" type="image/ico" href="/assets/imgs/favicon.6641861718d894bc7d10d7d5c05f1a34.ico"/>
     <script>history.scrollRestoration = "manual"</script>
+    <script>
+        window.addEventListener("dragover", function (e) {
+            e = e || event;
+            e.dataTransfer.dropEffect = "none";
+            e.preventDefault();
+        }, false);
+        window.addEventListener("drop", function (e) {
+            e = e || event;
+            e.preventDefault();
+        }, false);
+    </script>
 </head>
 <body>
 <div id="root"></div>

@@ -55,7 +55,15 @@ export default class SpacePage extends Component {
                     dataSource={this.items}
                     renderItem={item => {
                         if (item.type === "dragger") {
-                            return <div key={item.id} className="dragger-item">
+                            return <div
+                                key={item.id}
+                                className="dragger-item"
+                                onDragOver={e => {
+                                    if (e.dataTransfer.types[0] !== "Files") {
+                                        e.dataTransfer.dropEffect = "none";
+                                    }
+                                    e.stopPropagation();
+                                }}>
                                 <Upload.Dragger
                                     multiple
                                     showUploadList={false}
