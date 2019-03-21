@@ -29,6 +29,7 @@ export default class ItemModal extends Component {
     render = () => {
         return <Modal
             visible={this.isVisible}
+            title={this.props.params.spaceName + " / " + (this.item.name || "")}
             className="item-modal"
             maskClosable={false}
             width={800}

@@ -8,7 +8,8 @@ import ItemThumb from "~/components/ItemThumb";
 import moment from "moment";
 import logo from "~/assets/imgs/logo-v.png";
 import guid from "~/utils/guid";
-import openPasteTextModal from "~/modals/pasteTextModal";
+import openBuildTxtModal from "~/modals/buildTxtModal";
+import openBuildPngModal from "~/modals/buildPngModal";
 import event from "~/utils/event";
 import "./SpacePage.less";
 
@@ -46,7 +47,9 @@ export default class SpacePage extends Component {
         return <Layout className="space-page"
                        onPaste={e => {
                            if (e.clipboardData.types.includes("text/plain")) {
-                               openPasteTextModal(e.clipboardData.getData("text/plain"), file => this.uploadFile(file))
+                               openBuildTxtModal(e.clipboardData.getData("text/plain"), file => this.uploadFile(file));
+                           } else if (e.clipboardData.types.includes("Files")) {
+                               openBuildPngModal(e.clipboardData.files[0], file => this.uploadFile(file));
                            }
                        }}>
             <Layout.Header className="header">

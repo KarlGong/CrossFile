@@ -4,57 +4,67 @@ import {render, unmountComponentAtNode} from "react-dom";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import moment from "moment";
-import "./pasteTextModal.less";
+import "./buildPngModal.less";
 
 
-export default function openPasteTextModal(text, onSuccess) {
+export default function openBuildPngModal(file, onSuccess) {
     const target = document.createElement("div");
     document.body.appendChild(target);
 
-    render(<PasteTextModal text={text} onSuccess={onSuccess} afterClose={() => {
+    render(<BuildPngModal file={file} onSuccess={onSuccess} afterClose={() => {
         unmountComponentAtNode(target);
         target.remove();
     }}/>, target);
 }
 
 @observer
-class PasteTextModal extends Component {
+class BuildPngModal extends Component {
     static defaultProps = {
-        text: null,
+        file: null,
         onSuccess: (file) => {},
         afterClose: () => {}
     };
 
     @observable visible = true;
-    text = this.props.text;
-    fileNameWithoutExt = "text-" + moment().format("YYYYMMDDTHHmmss");
-    fileName = this.fileNameWithoutExt + ".txt";
+    @observable imageSrc = "";
+    fileNameWithoutExt = "image-" + moment().format("YYYYMMDDTHHmmss");
+    fileName = this.fileNameWithoutExt + ".png";
+
+    componentDidMount = () => {
+        let reader = new FileReader();
+        reader.onload = () => this.imageSrc = reader.result;
+        reader.readAsDataURL(this.props.file);
+    };
 
     render = () => {
         return <Modal
-            className="upload-modal"
-            title="Upload Text"
+            className="build-png-modal"
+            title="Upload Image"
             width={800}
-            closable={false}
             maskClosable={false}
             visible={this.visible}
             okText="Upload"
             onOk={e => {
-                this.props.onSuccess(new File([this.text], this.fileName));
-                this.visible = false;
+                let reader = new FileReader();
+                reader.onload = () => {
+                    this.props.onSuccess(new File([reader.result], this.fileName));
+                    this.visible = false;
+                };
+                reader.readAsArrayBuffer(this.props.file);
             }}
             onCancel={e => this.visible = false}
             afterClose={() => this.props.afterClose()}
         >
-            <Input.TextArea style={{resize: "none"}} rows={15} defaultValue={this.text}
-                            onChange={e => this.text = e.target.value}/>
+            <div className="image-container">
+                <img src={this.imageSrc} alt="image"/>
+            </div>
             <Form layout="inline" style={{marginTop: "20px"}}>
                 <Form.Item label="File Name">
                     <Input
                         style={{width: "350px"}}
-                        addonAfter=".txt"
+                        addonAfter=".png"
                         placeholder={this.fileNameWithoutExt}
-                        onChange={e => this.fileName = (e.target.value || this.fileNameWithoutExt) + ".txt"}/>
+                        onChange={e => this.fileName = (e.target.value || this.fileNameWithoutExt) + ".png"}/>
                 </Form.Item>
             </Form>
         </Modal>
