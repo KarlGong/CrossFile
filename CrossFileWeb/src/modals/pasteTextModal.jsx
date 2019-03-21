@@ -28,7 +28,7 @@ class PasteTextModal extends Component {
     @observable visible = true;
     text = this.props.text;
     fileNameWithoutExt = "text-" + moment().format("YYYYMMDDTHHmmss");
-    fileName = this.fileNameWithoutExt +".txt";
+    fileName = this.fileNameWithoutExt + ".txt";
 
     render = () => {
         return <Modal
@@ -46,12 +46,15 @@ class PasteTextModal extends Component {
             onCancel={e => this.visible = false}
             afterClose={() => this.props.afterClose()}
         >
-            <Input.TextArea style={{resize: "none"}} rows={15} defaultValue={this.text} onChange={e => this.text = e.target.value}/>
-            <Form layout="inline" style={{marginTop: "15px"}}>
+            <Input.TextArea style={{resize: "none"}} rows={15} defaultValue={this.text}
+                            onChange={e => this.text = e.target.value}/>
+            <Form layout="inline" style={{marginTop: "20px"}}>
                 <Form.Item label="File Name">
-                    <Input addonAfter=".txt"
-                           placeholder={this.fileNameWithoutExt}
-                           onChange={e => this.fileName = (e.target.value || this.fileNameWithoutExt) + ".txt"}/>
+                    <Input
+                        style={{width: "350px"}}
+                        addonAfter=".txt"
+                        placeholder={this.fileNameWithoutExt}
+                        onChange={e => this.fileName = (e.target.value || this.fileNameWithoutExt) + ".txt"}/>
                 </Form.Item>
             </Form>
         </Modal>
