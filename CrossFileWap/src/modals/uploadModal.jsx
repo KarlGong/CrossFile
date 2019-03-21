@@ -51,7 +51,7 @@ class UploadModal extends Component {
 
     render = () => {
         return <Modal
-            className="uploadModal"
+            className="upload-modal"
             popup
             closable
             maskClosable={false}

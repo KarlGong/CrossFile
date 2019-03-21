@@ -8,8 +8,10 @@ import ItemThumb from "~/components/ItemThumb";
 import moment from "moment";
 import logo from "~/assets/imgs/logo-v.png";
 import guid from "~/utils/guid";
-import "./SpacePage.less";
+import openPasteTextModal from "~/modals/pasteTextModal";
 import event from "~/utils/event";
+import "./SpacePage.less";
+
 
 @observer
 export default class SpacePage extends Component {
@@ -41,7 +43,12 @@ export default class SpacePage extends Component {
     };
 
     render = () => {
-        return <Layout className="space-page">
+        return <Layout className="space-page"
+                       onPaste={e => {
+                           if (e.clipboardData.types.includes("text/plain")) {
+                               openPasteTextModal(e.clipboardData.getData("text/plain"), file => this.uploadFile(file))
+                           }
+                       }}>
             <Layout.Header className="header">
                 <div onClick={e => this.props.router.push("/")} className="logo"><img src={logo} alt="logo"/></div>
                 <div className="title">{"/ " + this.spaceName}</div>
@@ -67,7 +74,7 @@ export default class SpacePage extends Component {
                                 <Upload.Dragger
                                     multiple
                                     showUploadList={false}
-                                    customRequest={this.handleUpload}
+                                    customRequest={e => this.uploadFile(e.file)}
                                 >
                                     <p className="ant-upload-drag-icon">
                                         <Icon type="plus"/>
@@ -136,16 +143,16 @@ export default class SpacePage extends Component {
         </Layout>
     };
 
-    handleUpload = (e) => {
-        if (e.file.size > 2 * 1024 * 1024 * 1024) {
+    uploadFile = (file) => {
+        if (file.size > 2 * 1024 * 1024 * 1024) {
             message.error("Cannot upload file larger than 2GB.", 2);
             return;
         }
         let uploadingItem = {
             id: guid(),
             type: "uploading",
-            fileName: e.file.name,
-            size: e.file.size,
+            fileName: file.name,
+            size: file.size,
             cancelSource: axios.CancelToken.source(),
             uploadLoaded: 0,
             uploadTotal: 0,
@@ -155,7 +162,7 @@ export default class SpacePage extends Component {
         this.items = this.fixItems.concat(this.uploadingItems).concat(this.loadedItems);
 
         let formData = new FormData();
-        formData.append(e.file.name, e.file);
+        formData.append(file.name, file);
         axios.post("/api/space/" + this.spaceName, formData,
             {
                 headers: {"Content-Type": "multipart/form-data"},
