@@ -59,7 +59,7 @@ export default class SpacePage extends Component {
                                 key={item.id}
                                 className="dragger-item"
                                 onDragOver={e => {
-                                    if (e.dataTransfer.types[0] !== "Files") {
+                                    if (!e.dataTransfer.types.includes("Files")) {
                                         e.dataTransfer.dropEffect = "none";
                                     }
                                     e.stopPropagation();
