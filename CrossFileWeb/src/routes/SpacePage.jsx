@@ -52,6 +52,7 @@ export default class SpacePage extends Component {
             <Layout.Header className="header">
                 <div onClick={e => this.props.router.push("/")} className="logo"><img src={logo} alt="logo"/></div>
                 <div className="title">{"/ " + this.spaceName}</div>
+                <div className="tip">Try: <div className="key">Ctrl</div> + <div className="key">v</div></div>
             </Layout.Header>
             <Layout.Content className="content">
                 <List
