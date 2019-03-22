@@ -7,14 +7,16 @@ import moment from "moment";
 import "./buildPngModal.less";
 
 
-export default function openBuildPngModal(file, onSuccess) {
-    const target = document.createElement("div");
-    document.body.appendChild(target);
+export default function openBuildPngModal(file) {
+    return new Promise((resolve, reject) => {
+        const target = document.createElement("div");
+        document.body.appendChild(target);
 
-    render(<BuildPngModal file={file} onSuccess={onSuccess} afterClose={() => {
-        unmountComponentAtNode(target);
-        target.remove();
-    }}/>, target);
+        render(<BuildPngModal file={file} onSuccess={resolve} onFail={reject} afterClose={() => {
+            unmountComponentAtNode(target);
+            target.remove();
+        }}/>, target);
+    });
 }
 
 @observer
@@ -22,6 +24,7 @@ class BuildPngModal extends Component {
     static defaultProps = {
         file: null,
         onSuccess: (file) => {},
+        onFail: () => {},
         afterClose: () => {}
     };
 
@@ -47,12 +50,15 @@ class BuildPngModal extends Component {
             onOk={e => {
                 let reader = new FileReader();
                 reader.onload = () => {
-                    this.props.onSuccess(new File([reader.result], this.fileName));
                     this.visible = false;
+                    this.props.onSuccess(new File([reader.result], this.fileName));
                 };
                 reader.readAsArrayBuffer(this.props.file);
             }}
-            onCancel={e => this.visible = false}
+            onCancel={e => {
+                this.visible = false;
+                this.props.onFail();
+            }}
             afterClose={() => this.props.afterClose()}
         >
             <div className="image-container">

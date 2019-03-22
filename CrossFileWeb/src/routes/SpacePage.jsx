@@ -50,9 +50,9 @@ export default class SpacePage extends Component {
         return <Layout className="space-page"
                        onPaste={e => {
                            if (e.clipboardData.types.includes("text/plain")) {
-                               openBuildTxtModal(e.clipboardData.getData("text/plain"), file => this.uploadFile(file));
+                               openBuildTxtModal(e.clipboardData.getData("text/plain")).then(file => this.uploadFile(file));
                            } else if (e.clipboardData.types.includes("Files")) {
-                               openBuildPngModal(e.clipboardData.files[0], file => this.uploadFile(file));
+                               openBuildPngModal(e.clipboardData.files[0]).then(file => this.uploadFile(file));
                            }
                        }}>
             <Layout.Header className="header">
