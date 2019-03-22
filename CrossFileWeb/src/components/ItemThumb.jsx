@@ -60,7 +60,7 @@ export default class ItemThumb extends Component {
 
     constructor(props) {
         super(props);
-        this.fileExt = path.extname(this.props.item.fileName).toLowerCase();
+        this.fileExt = path.extname(this.props.item.name).toLowerCase();
     }
 
     render = () => {

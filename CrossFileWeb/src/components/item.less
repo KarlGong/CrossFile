@@ -1,0 +1,47 @@
+.item {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 10px;
+  width: 150px;
+  height: 170px;
+  margin: 8px;
+  position: relative;
+
+  &:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  &:hover .actions {
+    opacity: 1;
+  }
+
+  .icon {
+    height: 78px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .name {
+    width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
+  }
+
+  .sub-text {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .actions {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 55px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
