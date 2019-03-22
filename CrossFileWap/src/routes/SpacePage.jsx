@@ -1,4 +1,4 @@
-import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction, Toast} from "antd-mobile";
+import {NavBar, Icon, Modal, PullToRefresh, ListView, List, ActivityIndicator, SwipeAction, Toast, NoticeBar} from "antd-mobile";
 import React, {Component} from "react";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
@@ -13,6 +13,7 @@ import "./SpacePage.less";
 export default class SpacePage extends Component {
 
     spaceName = this.props.params.spaceName;
+    @observable prepareUploadCount = 0;
     @observable isRefreshing = false;
     @observable isInitLoaded = false;
     @observable isLoadingMore = false;
@@ -33,7 +34,8 @@ export default class SpacePage extends Component {
 
     render = () => {
         return <div className="space-page">
-            <input ref={this.inputOpenFileRef} type="file" style={{display: "none"}} onChange={this.handleClickUpload}/>
+            {this.prepareUploadCount ? <NoticeBar className="notice">{this.prepareUploadCount} file(s) are ready to upload</NoticeBar>: null}
+            <input ref={this.inputOpenFileRef} type="file" multiple style={{display: "none"}} onChange={this.handleClickUpload}/>
             <NavBar
                 mode="light"
                 icon={<Icon type="left"/>}
@@ -122,13 +124,18 @@ export default class SpacePage extends Component {
     };
 
     handleClickUpload = (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            openUploadModal(this.spaceName, file, (item) => {
-                this.items = [item].concat(this.items);
-                this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
-            });
-        }
+        let files = Array.from(e.target.files);
+        this.prepareUploadCount = files.length;
+        files.reduce(
+            (previousPromise, file) =>
+                previousPromise.then(() =>
+                    openUploadModal(this.spaceName, file)
+                        .then(item => {
+                            this.items = [item].concat(this.items);
+                            this.listViewDataSource = this.listViewDataSource.cloneWithRows(this.items);
+                        }, () => Promise.resolve())
+                        .finally(() => this.prepareUploadCount = this.prepareUploadCount - 1))
+            , Promise.resolve());
         e.target.value = null; // clear the select file.
     };
 

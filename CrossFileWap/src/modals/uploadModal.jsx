@@ -10,19 +10,22 @@ import formatBytes from "~/utils/formatBytes";
 import path from "path";
 import "./uploadModal.less";
 
-export default function openUploadModal(spaceName, file, onSuccess) {
-    if (file.size > 2 * 1024 * 1024 * 1024) {
-        Toast.fail("Cannot upload file larger than 2GB.", 3, undefined, false);
-        return;
-    }
+export default function openUploadModal(spaceName, file) {
+    return new Promise((resolve, reject) => {
+        if (file.size > 2 * 1024 * 1024 * 1024) {
+            Toast.fail("Cannot upload file larger than 2GB.", 3, undefined, false);
+            reject();
+            return;
+        }
 
-    const target = document.createElement("div");
-    document.body.appendChild(target);
+        const target = document.createElement("div");
+        document.body.appendChild(target);
 
-    render(<UploadModal spaceName={spaceName} file={file} onSuccess={onSuccess} afterClose={() => {
-        unmountComponentAtNode(target);
-        target.remove();
-    }}/>, target);
+        render(<UploadModal spaceName={spaceName} file={file} onSuccess={resolve} onFail={reject} afterClose={() => {
+            unmountComponentAtNode(target);
+            target.remove();
+        }}/>, target);
+    });
 }
 
 @observer
@@ -31,6 +34,7 @@ class UploadModal extends Component {
         spaceName: "",
         file: "",
         onSuccess: (item) => {},
+        onFail: () => {},
         afterClose: () => {}
     };
 
@@ -95,7 +99,7 @@ class UploadModal extends Component {
                     if (e.lengthComputable && this.isUploading) {
                         this.uploadLoaded = e.loaded;
                         this.uploadTotal = e.total;
-                        this.uploadPercentage = + (e.loaded * 100 / e.total).toFixed(1);
+                        this.uploadPercentage = +(e.loaded * 100 / e.total).toFixed(1);
                     }
                 }
             }
@@ -129,11 +133,13 @@ class UploadModal extends Component {
                     text: "Yes", onPress: () => {
                         this.uploadingCancelSource.cancel("Uploading aborted!");
                         this.visible = false;
+                        this.props.onFail();
                     }
                 },
             ]);
         } else {
             this.visible = false;
+            this.props.onFail();
         }
     }
 }
