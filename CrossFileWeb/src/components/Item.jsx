@@ -8,7 +8,7 @@ import ItemThumb from "~/components/ItemThumb";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
 import event from "~/utils/event";
-import "./item.less";
+import "./Item.less";
 
 @observer
 export default class Item extends Component {
