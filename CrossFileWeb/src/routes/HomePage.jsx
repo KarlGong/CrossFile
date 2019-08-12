@@ -36,6 +36,7 @@ export default class HomePage extends Component {
                         <Input
                             placeholder="Enter a space name"
                             size="large"
+                            autoFocus
                             onChange={e => {
                                 this.spaceName = e.target.value;
                                 this.validator.resetResult("spaceName");
