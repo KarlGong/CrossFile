@@ -14,13 +14,15 @@ namespace CrossFile.Services
 {
     public interface IItemService
     {
-        Task<Item> GetItemAsync(String itemId);
+        Task<Item> GetItemAsync(string itemId);
+
+        Task<Item> GetItemByNameAsync(string name);
 
         Task<List<Item>> GetItemsAsync(GetItemsParams ps);
 
         Task<Item> AddItemAsync(AddItemParams ps);
 
-        Task DeleteItemAsync(String itemId);
+        Task DeleteItemAsync(string itemId);
     }
 
     public class ItemService : IItemService
@@ -41,7 +43,12 @@ namespace CrossFile.Services
 
         public async Task<Item> GetItemAsync(string itemId)
         {
-            return await _context.Items.SingleAsync(i => i.Id == itemId);
+            return await _context.Items.SingleOrDefaultAsync(i => i.Id == itemId);
+        }
+
+        public async Task<Item> GetItemByNameAsync(string name)
+        {
+            return await _context.Items.Where(i => i.FileName == name).FirstOrDefaultAsync();
         }
 
         public async Task<List<Item>> GetItemsAsync(GetItemsParams ps)

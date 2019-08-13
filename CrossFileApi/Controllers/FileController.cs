@@ -12,11 +12,13 @@ namespace CrossFile.Controllers
     [Route("api/[controller]")]
     public class FileController : Controller
     {
-        private readonly IFileService _service;
+        private readonly IItemService _itemService;
+        private readonly IFileService _fileService;
 
-        public FileController(IFileService service)
+        public FileController(IItemService itemService, IFileService fileService)
         {
-            _service = service;
+            _itemService = itemService;
+            _fileService = fileService;
         }
 
         [HttpGet("{fileName}")]
@@ -24,9 +26,24 @@ namespace CrossFile.Controllers
         {
             new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return new FileStreamResult(await _service.GetFileStreamAsync(fileName), mime ?? "application/octet-stream")
+            return new FileStreamResult(await _fileService.GetFileStreamAsync(fileName), mime ?? "application/octet-stream")
             {
                 FileDownloadName = name ?? fileName,
+                LastModified = DateTimeOffset.MinValue,
+                EnableRangeProcessing = true
+            };
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFileByName([FromQuery] string name)
+        {
+            new FileExtensionContentTypeProvider().TryGetContentType(name, out var mime);
+
+            var item = await _itemService.GetItemByNameAsync(name);
+            
+            return new FileStreamResult(await _fileService.GetFileStreamAsync(item.FileName), mime ?? "application/octet-stream")
+            {
+                FileDownloadName = name,
                 LastModified = DateTimeOffset.MinValue,
                 EnableRangeProcessing = true
             };
