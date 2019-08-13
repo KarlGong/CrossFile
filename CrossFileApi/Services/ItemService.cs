@@ -48,7 +48,7 @@ namespace CrossFile.Services
 
         public async Task<Item> GetItemByNameAsync(string name)
         {
-            return await _context.Items.Where(i => i.FileName == name).FirstOrDefaultAsync();
+            return await _context.Items.Where(i => i.Name == name).FirstOrDefaultAsync();
         }
 
         public async Task<List<Item>> GetItemsAsync(GetItemsParams ps)
