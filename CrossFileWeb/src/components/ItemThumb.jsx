@@ -56,6 +56,11 @@ export default class ItemThumb extends Component {
     static defaultProps = {
         item: {}
     };
+    
+    constructor(props) {
+        super(props);
+        this.fileExt = this.props.item.extension.toLowerCase();
+    }
 
     render = () => {
         if (this.props.item.thumbFileName) {
@@ -64,16 +69,16 @@ export default class ItemThumb extends Component {
             </div>
         }
 
-        let icon = extMap[this.props.item.extension];
+        let icon = extMap[this.fileExt];
         if (icon) {
             return <div className="item-thumb">
-                <img src={icon} alt={this.props.item.extension}/>
+                <img src={icon} alt={this.fileExt}/>
             </div>
         }
 
         return <div className="item-thumb">
-            <img src={file} alt={this.props.item.extension}/>
-            <div className="ext">{this.props.item.extension.replace(".", "")}</div>
+            <img src={file} alt={this.fileExt}/>
+            <div className="ext">{this.fileExt.replace(".", "")}</div>
         </div>
     }
 }

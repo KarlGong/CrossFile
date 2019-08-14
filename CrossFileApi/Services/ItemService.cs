@@ -98,7 +98,7 @@ namespace CrossFile.Services
                 SpaceName = ps.SpaceName,
                 Name = ps.Name,
                 Size = ps.FileStream.Length,
-                Extension = ps.Extension.ToLower(),
+                Extension = ps.Extension,
                 FileName = fileName,
                 ThumbFileName = thumbFileName,
                 InsertTime = DateTime.UtcNow,
