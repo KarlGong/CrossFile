@@ -30,7 +30,9 @@ export default class Item extends Component {
             <EditableText
                 className="name"
                 defaultText={this.props.item.name}
-                onSave={text => axios.put("/api/item/" + this.props.item.id, {name: text})}
+                onSave={text => axios.put("/api/item/" + this.props.item.id, {name: text})
+                    .then(() => message.success("Rename successfully!", 2))
+                }
             />
             <div className="sub-text">{formatBytes(this.props.item.size)}</div>
             <div className="sub-text">
