@@ -10,6 +10,7 @@ import openBuildPngModal from "~/modals/buildPngModal";
 import UploadingItem from "~/components/UploadingItem";
 import Item from "~/components/Item";
 import event from "~/utils/event";
+import path from "path";
 import "./SpacePage.less";
 
 
@@ -49,6 +50,7 @@ export default class SpacePage extends Component {
     render = () => {
         return <Layout className="space-page"
                        onPaste={e => {
+                           if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
                            if (e.clipboardData.types.includes("text/plain")) {
                                openBuildTxtModal(e.clipboardData.getData("text/plain")).then(file => this.uploadFile(file));
                            } else if (e.clipboardData.types.includes("Files")) {
@@ -107,6 +109,7 @@ export default class SpacePage extends Component {
             id: guid(),
             spaceName: this.spaceName,
             name: file.name,
+            extension: path.extname(file.name),
             size: file.size,
             file: file
         };

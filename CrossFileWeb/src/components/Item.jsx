@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {observer} from "mobx-react";
 import {observable, toJS, untracked, runInAction, action} from "mobx";
 import axios from "axios";
+import EditableText from "~/components/EditableText";
 import ItemThumb from "~/components/ItemThumb";
 import formatBytes from "~/utils/formatBytes";
 import moment from "moment";
@@ -26,7 +27,11 @@ export default class Item extends Component {
                 this.context.router.push("/space/" + this.props.item.spaceName + "/item/" + this.props.item.id)}>
                 <ItemThumb item={this.props.item}/>
             </div>
-            <div className="name" title={this.props.item.name}>{this.props.item.name}</div>
+            <EditableText
+                className="name"
+                defaultText={this.props.item.name}
+                onSave={text => axios.put("/api/item/" + this.props.item.id, {name: text})}
+            />
             <div className="sub-text">{formatBytes(this.props.item.size)}</div>
             <div className="sub-text">
                 {moment().diff(moment(this.props.item.insertTime)) > 7 * 24 * 60 * 60 * 1000 ?

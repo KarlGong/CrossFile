@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CrossFile.Models;
 using CrossFile.Services;
+using CrossFile.Services.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrossFile.Controllers
@@ -22,6 +23,12 @@ namespace CrossFile.Controllers
         public async Task<Item> GetItem([FromRoute] string itemId)
         {
             return await _service.GetItemAsync(itemId);
+        }
+
+        [HttpPut("{itemId}")]
+        public async Task<Item> UpdateItem([FromRoute] string itemId, [FromBody] UpdateItemParams ps)
+        {
+            return await _service.UpdateItemAsync(itemId, ps);
         }
 
         [HttpDelete("{itemId}")]

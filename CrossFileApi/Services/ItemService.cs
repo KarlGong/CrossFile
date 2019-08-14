@@ -20,6 +20,8 @@ namespace CrossFile.Services
 
         Task<Item> AddItemAsync(AddItemParams ps);
 
+        Task<Item> UpdateItemAsync(string itemId, UpdateItemParams ps);
+
         Task DeleteItemAsync(string itemId);
     }
 
@@ -98,18 +100,25 @@ namespace CrossFile.Services
                 SpaceName = ps.SpaceName,
                 Name = ps.Name,
                 Size = ps.FileStream.Length,
-                Extension = ps.Extension,
+                Extension = ps.Extension.ToLower(),
                 FileName = fileName,
                 ThumbFileName = thumbFileName,
-                InsertTime = DateTime.UtcNow,
-                UpdateTime = DateTime.UtcNow
+                InsertTime = DateTimeOffset.UtcNow,
+                UpdateTime = DateTimeOffset.UtcNow
             };
 
             await _context.Items.AddAsync(newItem);
-
             await _context.SaveChangesAsync();
-
             return newItem;
+        }
+
+        public async Task<Item> UpdateItemAsync(string itemId, UpdateItemParams ps)
+        {
+            var item = await GetItemAsync(itemId);
+            _mapper.Map(ps, item);
+            item.UpdateTime = DateTimeOffset.UtcNow;
+            await _context.SaveChangesAsync();
+            return item;
         }
 
         public async Task DeleteItemAsync(string itemId)
@@ -124,7 +133,6 @@ namespace CrossFile.Services
             }
 
             _context.Items.Remove(item);
-
             await _context.SaveChangesAsync();
         }
     }
