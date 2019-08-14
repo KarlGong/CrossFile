@@ -14,12 +14,14 @@ namespace CrossFile.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity("CrossFile.Models.Item", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Extension");
 
                     b.Property<string>("FileName");
 
@@ -32,6 +34,8 @@ namespace CrossFile.Migrations
                     b.Property<string>("SpaceName");
 
                     b.Property<string>("ThumbFileName");
+
+                    b.Property<DateTimeOffset>("UpdateTime");
 
                     b.HasKey("Id");
 

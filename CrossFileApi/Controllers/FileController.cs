@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CrossFile.Models;
 using CrossFile.Services;
+using CrossFile.Services.Parameters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -35,15 +36,22 @@ namespace CrossFile.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFileByName([FromQuery] string name)
+        public async Task<IActionResult> GetFileByFilter([FromQuery]string spaceName, [FromQuery] string partialName)
         {
-            new FileExtensionContentTypeProvider().TryGetContentType(name, out var mime);
+            var items = await _itemService.GetItemsAsync(new GetItemsParams()
+            {
+                SpaceName = spaceName,
+                PartialName = partialName,
+                Size = 1
+            });
 
-            var item = await _itemService.GetItemByNameAsync(name);
+            var item = items[0];
             
+            new FileExtensionContentTypeProvider().TryGetContentType(item.FileName, out var mime);
+
             return new FileStreamResult(await _fileService.GetFileStreamAsync(item.FileName), mime ?? "application/octet-stream")
             {
-                FileDownloadName = name,
+                FileDownloadName = item.Name,
                 LastModified = DateTimeOffset.MinValue,
                 EnableRangeProcessing = true
             };

@@ -8,7 +8,7 @@ namespace CrossFile.Services.Parameters
         
         public string Name { get; set; }
         
-        public string FileExt { get; set; }
+        public string Extension { get; set; }
         
         public Stream FileStream { get; set; }
     }

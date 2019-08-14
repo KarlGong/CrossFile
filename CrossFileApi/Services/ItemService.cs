@@ -16,8 +16,6 @@ namespace CrossFile.Services
     {
         Task<Item> GetItemAsync(string itemId);
 
-        Task<Item> GetItemByNameAsync(string name);
-
         Task<List<Item>> GetItemsAsync(GetItemsParams ps);
 
         Task<Item> AddItemAsync(AddItemParams ps);
@@ -46,14 +44,19 @@ namespace CrossFile.Services
             return await _context.Items.SingleOrDefaultAsync(i => i.Id == itemId);
         }
 
-        public async Task<Item> GetItemByNameAsync(string name)
-        {
-            return await _context.Items.Where(i => i.Name == name).FirstOrDefaultAsync();
-        }
-
         public async Task<List<Item>> GetItemsAsync(GetItemsParams ps)
         {
-            var queryable = _context.Items.Where(i => i.SpaceName == ps.SpaceName);
+            IQueryable<Item> queryable = _context.Items;
+
+            if (ps.SpaceName != null)
+            {
+                queryable = queryable.Where(i => i.SpaceName == ps.SpaceName);
+            }
+
+            if (ps.PartialName != null)
+            {
+                queryable = queryable.Where(i => i.Name.Contains(ps.PartialName));
+            }
 
             if (ps.FromId != null)
             {
@@ -61,19 +64,26 @@ namespace CrossFile.Services
                 queryable = queryable.Where(i => i.InsertTime < item.InsertTime);
             }
 
-            return await queryable.OrderByDescending(i => i.InsertTime).Take(ps.Size).ToListAsync();
+            queryable = queryable.OrderByDescending(i => i.InsertTime);
+
+            if (ps.Size != null)
+            {
+                queryable = queryable.Take(ps.Size);
+            }
+
+            return await queryable.ToListAsync();
         }
 
         public async Task<Item> AddItemAsync(AddItemParams ps)
         {
             var itemId = Guid.NewGuid().ToString();
-            var fileName = itemId + ps.FileExt;
+            var fileName = itemId + ps.Extension;
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
             
             string thumbFileName = null;
 
-            if (new[] {".jpg", ".jpeg", ".gif", ".png"}.Contains(ps.FileExt, StringComparer.OrdinalIgnoreCase))
+            if (new[] {".jpg", ".jpeg", ".gif", ".png"}.Contains(ps.Extension, StringComparer.OrdinalIgnoreCase))
             {
                 using (var thumbStream = await _imageService.ResizeToPng(ps.FileStream, 128, 128))
                 {
@@ -88,9 +98,11 @@ namespace CrossFile.Services
                 SpaceName = ps.SpaceName,
                 Name = ps.Name,
                 Size = ps.FileStream.Length,
+                Extension = ps.Extension,
                 FileName = fileName,
                 ThumbFileName = thumbFileName,
-                InsertTime = DateTime.UtcNow
+                InsertTime = DateTime.UtcNow,
+                UpdateTime = DateTime.UtcNow
             };
 
             await _context.Items.AddAsync(newItem);

@@ -46,7 +46,7 @@ namespace CrossFile.Controllers
                 return await _service.AddItemAsync(new AddItemParams()
                 {
                     Name = formFile.Name,
-                    FileExt = fileExt,
+                    Extension = fileExt,
                     SpaceName = spaceName,
                     FileStream = fileStream
                 });
