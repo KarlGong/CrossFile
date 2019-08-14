@@ -65,6 +65,7 @@ namespace CrossFile
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCrossFileException();
             app.UseCrossFileRewrite();
 
             app.UseStaticFiles(new StaticFileOptions()

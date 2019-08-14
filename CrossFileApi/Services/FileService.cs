@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
+using CrossFile.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
@@ -13,7 +14,6 @@ namespace CrossFile.Services
 
         Task DeleteFileAsync(string fileName);
     }
-
 
     public class FileService : IFileService
     {
@@ -31,6 +31,8 @@ namespace CrossFile.Services
         public async Task<Stream> GetFileStreamAsync(string fileName)
         {
             var filePath = Path.Combine(_storeDirectory, fileName);
+            
+            if (!File.Exists(filePath)) throw new NotFoundException($"File {fileName} does not exist.");
 
             return new FileStream(filePath, FileMode.Open, FileAccess.Read);
         }
@@ -54,6 +56,8 @@ namespace CrossFile.Services
         public async Task DeleteFileAsync(string fileName)
         {
             var filePath = Path.Combine(_storeDirectory, fileName);
+            
+            if (!File.Exists(filePath)) throw new NotFoundException($"File {fileName} does not exist.");
 
             File.Delete(filePath);
         }

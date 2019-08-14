@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CrossFile.Models;
@@ -27,7 +28,8 @@ namespace CrossFile.Controllers
         {
             new FileExtensionContentTypeProvider().TryGetContentType(fileName, out var mime);
 
-            return new FileStreamResult(await _fileService.GetFileStreamAsync(fileName), mime ?? "application/octet-stream")
+            return new FileStreamResult(await _fileService.GetFileStreamAsync(fileName),
+                mime ?? "application/octet-stream")
             {
                 FileDownloadName = name ?? fileName,
                 LastModified = DateTimeOffset.MinValue,
@@ -36,7 +38,7 @@ namespace CrossFile.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFileByFilter([FromQuery]string spaceName, [FromQuery] string partialName)
+        public async Task<IActionResult> GetFileByFilter([FromQuery] string spaceName, [FromQuery] string partialName)
         {
             var items = await _itemService.GetItemsAsync(new GetItemsParams()
             {
@@ -45,11 +47,14 @@ namespace CrossFile.Controllers
                 Size = 1
             });
 
+            if (!items.Any()) return NotFound("File does not exist.");
+
             var item = items[0];
-            
+
             new FileExtensionContentTypeProvider().TryGetContentType(item.FileName, out var mime);
 
-            return new FileStreamResult(await _fileService.GetFileStreamAsync(item.FileName), mime ?? "application/octet-stream")
+            return new FileStreamResult(await _fileService.GetFileStreamAsync(item.FileName),
+                mime ?? "application/octet-stream")
             {
                 FileDownloadName = item.Name,
                 LastModified = DateTimeOffset.MinValue,

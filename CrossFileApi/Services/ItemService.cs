@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CrossFile.Data;
+using CrossFile.Exceptions;
 using CrossFile.Models;
 using CrossFile.Services.Parameters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace CrossFile.Services
 {
@@ -43,7 +43,9 @@ namespace CrossFile.Services
 
         public async Task<Item> GetItemAsync(string itemId)
         {
-            return await _context.Items.SingleOrDefaultAsync(i => i.Id == itemId);
+            var item = await _context.Items.SingleOrDefaultAsync(i => i.Id == itemId);
+            if (item == null) throw new NotFoundException($"Item {itemId} does not exist.");
+            return item;
         }
 
         public async Task<List<Item>> GetItemsAsync(GetItemsParams ps)
@@ -82,7 +84,7 @@ namespace CrossFile.Services
             var fileName = itemId + ps.Extension;
 
             await _fileService.SaveFileAsync(fileName, ps.FileStream);
-            
+
             string thumbFileName = null;
 
             if (new[] {".jpg", ".jpeg", ".gif", ".png"}.Contains(ps.Extension, StringComparer.OrdinalIgnoreCase))
@@ -123,8 +125,7 @@ namespace CrossFile.Services
 
         public async Task DeleteItemAsync(string itemId)
         {
-            var item = await _context.Items.SingleAsync(i => i.Id == itemId);
-
+            var item = await GetItemAsync(itemId);
             await _fileService.DeleteFileAsync(item.FileName);
 
             if (item.ThumbFileName != null)
