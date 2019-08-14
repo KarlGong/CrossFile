@@ -32,7 +32,7 @@ export default class ItemPage extends Component {
             {this.isLoaded ?
                 <div className="container">
                     <div className="preview-container">
-                        <FilePreview fileName={this.item.fileName} fileSize={this.item.size}/>
+                        <FilePreview fileName={this.item.fileName} fileExt={this.item.extension} fileSize={this.item.size}/>
                         <div className={cs("qrcode", {hidden: !this.showQRCode})} onClick={e => this.showQRCode = false}>
                             <QRCode value={window.location.href} size={256}/>
                         </div>

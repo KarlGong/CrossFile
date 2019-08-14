@@ -40,7 +40,7 @@ export default class ItemModal extends Component {
             {this.isLoading ? <div className="loading"><Spin/></div>
                 : <div>
                     <div className="preview-container">
-                        <FilePreview fileName={this.item.fileName} fileSize={this.item.size}/>
+                        <FilePreview fileName={this.item.fileName} fileExt={this.item.extension} fileSize={this.item.size}/>
                     </div>
                     <hr/>
                     <div className="info">

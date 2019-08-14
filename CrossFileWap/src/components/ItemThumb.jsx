@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {observer} from "mobx-react";
-import path from "path";
 import "./ItemThumb.less";
 import avi from "~/assets/imgs/file-exts/avi.png";
 import csv from "~/assets/imgs/file-exts/csv.png";
@@ -58,11 +57,6 @@ export default class ItemThumb extends Component {
         item: {}
     };
 
-    constructor(props) {
-        super(props);
-        this.fileExt = path.extname(this.props.item.fileName).toLowerCase();
-    }
-
     render = () => {
         if (this.props.item.thumbFileName) {
             return <div className="item-thumb">
@@ -70,16 +64,16 @@ export default class ItemThumb extends Component {
             </div>
         }
 
-        let icon = extMap[this.fileExt];
+        let icon = extMap[this.props.item.extension];
         if (icon) {
             return <div className="item-thumb">
-                <img src={icon} alt={this.fileExt}/>
+                <img src={icon} alt={this.props.item.extension}/>
             </div>
         }
 
         return <div className="item-thumb">
-            <img src={file} alt={this.fileExt}/>
-            <div className="ext">{this.fileExt.replace(".", "")}</div>
+            <img src={file} alt={this.props.item.extension}/>
+            <div className="ext">{this.props.item.extension.replace(".", "")}</div>
         </div>
     }
 }
