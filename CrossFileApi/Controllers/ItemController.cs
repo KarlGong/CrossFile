@@ -25,7 +25,7 @@ namespace CrossFile.Controllers
             return await _service.GetItemAsync(itemId);
         }
 
-        [HttpPut("{itemId}")]
+        [HttpPatch("{itemId}")]
         public async Task<Item> UpdateItem([FromRoute] string itemId, [FromBody] UpdateItemParams ps)
         {
             return await _service.UpdateItemAsync(itemId, ps);
