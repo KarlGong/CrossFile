@@ -1,10 +1,10 @@
 rd dist /s /q
 
 cd CrossFileApi
-dotnet clean -c release -r win7-x64
-dotnet publish -c release -r win7-x64
+dotnet clean -c release -r win81-x64
+dotnet publish -c release -r win81-x64
 cd ..
-xcopy CrossFileApi\bin\Release\netcoreapp2.2\win7-x64\publish dist\ /s /e /c /y /h /r
+xcopy CrossFileApi\bin\Release\netcoreapp2.2\win81-x64\publish dist\ /s /e /c /y /h /r
 
 cd CrossFileWap
 cmd /C npm run release
