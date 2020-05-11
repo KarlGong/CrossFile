@@ -28,7 +28,9 @@ export default class HomePage extends Component {
 
     render = () => {
         return <div className="home-page">
-            <img className="logo" src={logo} alt="logo"/>
+            <div className="logo">
+                <img src={logo} alt="logo"/>
+            </div>
             <div className="form">
                 <WingBlank>
                     <InputItem
