@@ -72,7 +72,7 @@ namespace CrossFile.Services
 
             if (ps.Size != null)
             {
-                queryable = queryable.Take(ps.Size);
+                queryable = queryable.Take(ps.Size.Value);
             }
 
             return await queryable.ToListAsync();

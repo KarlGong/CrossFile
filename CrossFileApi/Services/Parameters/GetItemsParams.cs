@@ -8,6 +8,6 @@ namespace CrossFile.Services.Parameters
         
         public string FromId { get; set; }
         
-        public int Size { get; set; }
+        public int? Size { get; set; }
     }
 }

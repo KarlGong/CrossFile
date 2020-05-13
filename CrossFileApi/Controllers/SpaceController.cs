@@ -24,7 +24,7 @@ namespace CrossFile.Controllers
         }
 
         [HttpGet("{spaceName}")]
-        public async Task<IEnumerable<Item>> GetItems([FromRoute] string spaceName, [FromQuery] string fromId, [FromQuery] int size)
+        public async Task<IEnumerable<Item>> GetItems([FromRoute] string spaceName, [FromQuery] string fromId, [FromQuery] int? size)
         {
             return await _service.GetItemsAsync(new GetItemsParams()
             {
