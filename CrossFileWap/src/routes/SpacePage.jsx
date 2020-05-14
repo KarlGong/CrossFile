@@ -19,7 +19,7 @@ export default class SpacePage extends Component {
     @observable isLoadingMore = false;
     @observable isLoadedToEnd = false;
     @observable listViewDataSource = new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1.id !== row2.id,
+        rowHasChanged: (row1, row2) => row1.id !== row2.id || row1.name !== row2.name, // update list item if id or name are different
     });
     items = [];
 
