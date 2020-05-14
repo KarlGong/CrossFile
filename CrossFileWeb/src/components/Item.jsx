@@ -29,7 +29,7 @@ export default class Item extends Component {
             </div>
             <EditableText
                 className="name"
-                defaultText={this.props.item.name}
+                text={this.props.item.name}
                 onSave={text => axios.patch("/api/item/" + this.props.item.id, {name: text})
                     .then(() => message.success("Rename successfully!", 2))
                 }

@@ -8,16 +8,21 @@ import "./EditableText.less";
 @observer
 export default class EditableText extends Component {
     static defaultProps = {
-        defaultText: "",
+        text: "",
         className: "",
         style: {},
         onSave: (text) => {},
         onCancel: () => {}
     };
 
-    oldText = this.props.defaultText;
-    @observable text = this.props.defaultText;
+    oldText = this.props.text;
+    @observable text = this.props.text;
     @observable isEditing = false;
+
+    componentWillReceiveProps(nextProps) {
+        this.oldText = nextProps.text;
+        this.text = nextProps.text;
+    }
 
     render = () => {
         return <div className={classNames(this.props.className, "editable-text")} style={this.props.style}>
