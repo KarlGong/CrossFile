@@ -89,10 +89,28 @@ namespace CrossFile.Services
 
             if (new[] {".jpg", ".jpeg", ".gif", ".png"}.Contains(ps.Extension, StringComparer.OrdinalIgnoreCase))
             {
-                using (var thumbStream = await _imageService.ResizeToPng(ps.FileStream, 128, 128))
+                try
                 {
-                    thumbFileName = itemId + "-thumb.png";
-                    await _fileService.SaveFileAsync(thumbFileName, thumbStream);
+                    var thumbStream = await _imageService.ResizeToPng(ps.FileStream, 128, 128);
+
+                    try
+                    {
+                        thumbFileName = itemId + "-thumb.png";
+                        await _fileService.SaveFileAsync(thumbFileName, thumbStream);
+                    }
+                    catch (Exception e)
+                    {
+                        thumbFileName = null;
+                        // log error
+                    }
+                    finally
+                    {
+                        thumbStream.Dispose();
+                    }
+                }
+                catch (Exception e)
+                {
+                    // log error
                 }
             }
 

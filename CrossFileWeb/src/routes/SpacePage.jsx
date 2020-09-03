@@ -43,7 +43,7 @@ export default class SpacePage extends Component {
         this.refresh();
     }
 
-    componentWillUnMount = () => {
+    componentWillUnmount = () => {
         this.eventDisposers.map((disposer) => disposer());
     };
 
@@ -60,7 +60,7 @@ export default class SpacePage extends Component {
             <Layout.Header className="header">
                 <div onClick={e => this.props.router.push("/")} className="logo"><img src={logo} alt="logo"/></div>
                 <div className="title">{"/ " + this.spaceName}</div>
-                <div className="tip">Try: <div className="key">Ctrl</div> + <div className="key">v</div></div>
+                <div className="tip">Try: <div className="key">Ctrl / ⌘</div> + <div className="key">V</div></div>
             </Layout.Header>
             <Layout.Content className="content">
                 <Spin spinning={this.isRefreshing}>
@@ -100,6 +100,11 @@ export default class SpacePage extends Component {
     };
 
     uploadFile = (file) => {
+        // ignore folder https://stackoverflow.com/questions/25016442/how-to-distinguish-if-a-file-or-folder-is-being-dragged-prior-to-it-being-droppe
+        if (!file.type && file.size % 4096 === 0) {
+            return;
+        }
+
         if (file.size > 2 * 1024 * 1024 * 1024) {
             message.error("Cannot upload file larger than 2GB.", 2);
             return;
