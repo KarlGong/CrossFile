@@ -102,6 +102,7 @@ export default class SpacePage extends Component {
     uploadFile = (file) => {
         // ignore folder https://stackoverflow.com/questions/25016442/how-to-distinguish-if-a-file-or-folder-is-being-dragged-prior-to-it-being-droppe
         if (!file.type && file.size % 4096 === 0) {
+            message.error("Cannot upload folder.", 2);
             return;
         }
 
