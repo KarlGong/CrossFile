@@ -47,7 +47,7 @@
     "clipboard-js": "^0.3.6",
     "mobx": "^3.5.1",
     "mobx-react": "^4.4.1",
-    "moment": "^2.20.1",
+    "moment": "^2.29.4",
     "prop-types": "^15.6.0",
     "qrcode.react": "^0.9.3",
     "react": "^16.4.2",
